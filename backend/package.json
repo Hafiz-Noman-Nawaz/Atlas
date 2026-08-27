@@ -1,0 +1,29 @@
+{
+  "name": "atlas-backend",
+  "version": "1.0.0",
+  "description": "Production-quality Node.js + Express backend for Atlas Chatbot",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "@clerk/express": "^2.1.63",
+    "@google/genai": "^2.18.0",
+    "axios": "^1.7.9",
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.10.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mammoth": "^1.12.1",
+    "mongoose": "^8.10.1",
+    "multer": "^2.2.0",
+    "pdf-parse": "^2.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
