@@ -32,7 +32,7 @@ export const PREDEFINED_RESPONSES = {
     `I cannot perform physical or external offline actions like that. ${CAPABILITIES_AND_LIMITS_TEXT}`,
   ],
   app_features: [
-    `Here are the features and shortcuts available in Atlas:
+    `Here are the features and shortcuts available in ZeoAtlas:
 • **Screenshot & File Upload**: Click the Paperclip 📎 icon or paste screenshots directly (\`Ctrl+V\`).
 • **Syntax Highlighting & Copy**: Clean dark syntax blocks with a 1-click **Copy Code** button.
 • **Settings Panel**: Click the **Settings ⚙️** icon in the sidebar to change your nickname, avatar, theme, font size, and AI temperature.
@@ -40,16 +40,16 @@ export const PREDEFINED_RESPONSES = {
 • **Data Privacy**: Delete individual chats or clear your entire conversation history in Settings.`,
   ],
   greeting: [
-    "Hello! I am Atlas, your AI assistant. How can I help you with your coding or machine learning projects today? 👋",
+    "Hello! I am ZeoAtlas, your AI assistant. How can I help you with your coding or machine learning projects today? 👋",
     "Hey there! Ready to write code, debug issues, or explore ML models. What are you working on today?",
-    "Greetings! Atlas is online and ready. How can I assist you?",
+    "Greetings! ZeoAtlas is online and ready. How can I assist you?",
     "Hi! Great to have you here. Let me know what programming or AI questions you have!",
   ],
   goodbye: [
     "Goodbye! Feel free to return whenever you have more coding or machine learning questions. Happy building! 🚀",
     "Have a great day! Keep coding and building amazing software.",
     "See you later! Don't hesitate to reach out if you get stuck on an algorithm or project.",
-    "Farewell! Atlas will be here whenever you need assistance next.",
+    "Farewell! ZeoAtlas will be here whenever you need assistance next.",
   ],
   thanks: [
     "You're very welcome! Let me know if you need anything else. 😊",
@@ -58,8 +58,8 @@ export const PREDEFINED_RESPONSES = {
     "You got it! Reach out whenever you run into another challenge.",
   ],
   bot_identity: [
-    "I am **Atlas**, a full-stack conversational AI assistant powered by a custom Python ML Intent Classification engine, Node.js, and Google Gemini.",
-    "I am **Atlas** — your software engineering and intent classification companion.",
+    "I am **ZeoAtlas**, a full-stack conversational AI assistant powered by a custom Python ML Intent Classification engine, Node.js, and Google Gemini.",
+    "I am **ZeoAtlas** — your software engineering and intent classification companion.",
   ],
   help: [
     "I'm here to assist you! You can ask me questions about programming (Python, JavaScript), Databases & SQL, System Design, Debugging, or test intent classification.",
@@ -70,15 +70,15 @@ export const PREDEFINED_RESPONSES = {
     "I'm doing great, thank you for asking! How are your software and ML projects coming along?",
   ],
   name: [
-    "My name is **Atlas**. I am your AI intent classification and engineering assistant.",
-    "You can call me **Atlas**! 🤖",
+    "My name is **ZeoAtlas**. I am your AI intent classification and engineering assistant.",
+    "You can call me **ZeoAtlas**! 🤖",
   ],
   age: [
     "I was initialized in 2026 and continuously evolve with updated machine learning models and knowledge bases!",
     "I am a modern AI assistant built and deployed in 2026.",
   ],
   creator: [
-    "I was built and engineered as the Atlas Chatbot platform using a custom Python ML model, Node.js + Express backend, and React frontend.",
+    "I was built and engineered as the ZeoAtlas platform using a custom Python ML model, Node.js + Express backend, and React frontend.",
     "I was designed and developed by my engineering team using full-stack JavaScript and Python Machine Learning.",
   ],
   positive_feedback: [

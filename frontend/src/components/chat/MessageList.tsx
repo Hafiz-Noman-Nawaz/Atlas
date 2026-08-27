@@ -99,8 +99,8 @@ export default function MessageList() {
         {/* Live Smooth Streaming Message Bubble */}
         {displayedStreamingText && (
           <div className="group flex gap-3 px-4 py-3 sm:px-6 justify-start animate-in fade-in slide-in-from-bottom-2 duration-200">
-            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-accent text-white shadow-sm mt-0.5 animate-pulse">
-              <span className="text-xs font-bold">A</span>
+            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-accent text-white shadow-xs mt-0.5 animate-pulse">
+              <span className="text-xs font-bold">Z</span>
             </div>
             <div className="max-w-[90%] sm:max-w-[80%] flex flex-col items-start">
               <div className="rounded-2xl rounded-bl-md border border-[var(--border-light)] bg-[var(--bg-secondary)] px-4 py-3 text-[var(--text-primary)] shadow-sm">

@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-const APP_NAME = process.env.APP_NAME || 'Atlas';
+const APP_NAME = process.env.APP_NAME || 'ZeoAtlas';
 
 // Ensure uploads folder exists
 const uploadsDir = path.join(process.cwd(), 'uploads');

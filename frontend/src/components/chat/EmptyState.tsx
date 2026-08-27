@@ -35,12 +35,12 @@ export default function EmptyState() {
     <div className="flex flex-1 flex-col items-center justify-center px-4 pb-12 pt-6">
       {/* Brand mark */}
       <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
-          <span className="text-sm font-bold text-white">A</span>
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent shadow-xs">
+          <span className="text-sm font-bold text-white">Z</span>
         </div>
       </div>
 
-      <h1 className="text-heading-lg text-[var(--text-primary)]">Atlas AI Assistant</h1>
+      <h1 className="text-heading-lg font-bold text-[var(--text-primary)]">ZeoAtlas AI Assistant</h1>
       <p className="mt-2 max-w-md text-center text-body text-[var(--text-secondary)]">
         Specialized in <strong>intent classification</strong> and <strong>programming assistance</strong>. Ask a technical question or choose a prompt below.
       </p>

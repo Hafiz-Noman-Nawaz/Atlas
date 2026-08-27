@@ -32,13 +32,13 @@ export default function ChatHeader() {
       return;
     }
 
-    const title = activeConversation?.title || 'Atlas Chat Export';
+    const title = activeConversation?.title || 'ZeoAtlas Chat Export';
     let md = `# ${title}\n\n`;
-    md += `*Exported from Atlas on ${new Date().toLocaleString()}*\n\n---\n\n`;
+    md += `*Exported from ZeoAtlas on ${new Date().toLocaleString()}*\n\n---\n\n`;
 
     messages.forEach((msg) => {
       const isUser = msg.role === 'user';
-      const sender = isUser ? '👤 **You**' : '🤖 **Atlas**';
+      const sender = isUser ? '👤 **You**' : '🤖 **ZeoAtlas**';
       const time = msg.created_at ? new Date(msg.created_at).toLocaleTimeString() : '';
       
       md += `### ${sender}  \`${time}\`\n\n`;
@@ -75,7 +75,7 @@ export default function ChatHeader() {
       return;
     }
 
-    const title = activeConversation?.title || 'Atlas Chat Export';
+    const title = activeConversation?.title || 'ZeoAtlas Chat Export';
     const exportData = {
       conversation_id: activeConversationId,
       title,
@@ -124,7 +124,7 @@ export default function ChatHeader() {
               {activeConversation.title}
             </h2>
           ) : (
-            <h2 className="text-body font-medium text-[var(--text-primary)]">Atlas</h2>
+            <h2 className="text-body font-bold text-[var(--text-primary)]">ZeoAtlas</h2>
           )}
         </div>
       </div>

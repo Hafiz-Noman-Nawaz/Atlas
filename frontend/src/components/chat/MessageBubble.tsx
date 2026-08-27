@@ -30,8 +30,8 @@ export default function MessageBubble({ message, index }: Props) {
     >
       {/* Assistant avatar */}
       {!isUser && (
-        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-accent text-white shadow-sm mt-0.5">
-          <span className="text-xs font-bold">A</span>
+        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-accent text-white shadow-xs mt-0.5">
+          <span className="text-xs font-bold">Z</span>
         </div>
       )}
 

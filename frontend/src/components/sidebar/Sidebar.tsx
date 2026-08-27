@@ -95,11 +95,11 @@ export default function Sidebar() {
       {/* Header */}
       <div className="flex h-14 items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent">
-            <span className="text-xs font-bold text-white">A</span>
+          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent shadow-xs">
+            <span className="text-xs font-bold text-white">Z</span>
           </div>
-          <span className="text-heading-sm text-[var(--text-primary)]" style={{ fontSize: 16 }}>
-            Atlas
+          <span className="text-heading-sm font-bold text-[var(--text-primary)]" style={{ fontSize: 16 }}>
+            ZeoAtlas
           </span>
         </div>
         <button
