@@ -41,8 +41,8 @@ export default function App() {
       <Routes>
         {/* Auth routes */}
         <Route element={<AuthLayout />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login/*" element={<LoginPage />} />
+          <Route path="/register/*" element={<RegisterPage />} />
         </Route>
 
         {/* Protected app routes */}
