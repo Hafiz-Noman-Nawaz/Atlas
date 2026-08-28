@@ -16,9 +16,9 @@ export default function AuthLayout() {
         <div className="mb-6 text-center">
           <div className="mb-2.5 flex items-center justify-center gap-2.5">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent shadow-lg shadow-accent/20">
-              <span className="text-base font-bold text-white">A</span>
+              <span className="text-base font-bold text-white">Z</span>
             </div>
-            <h1 className="text-heading-md font-bold text-[var(--text-primary)]">Atlas</h1>
+            <h1 className="text-heading-md font-bold text-[var(--text-primary)]">ZeoAtlas</h1>
           </div>
           <p className="text-body-sm text-[var(--text-secondary)]">
             Intelligent ML & Programming Assistant
