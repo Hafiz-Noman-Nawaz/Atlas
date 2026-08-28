@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Check, X } from 'lucide-react';
 import { authApi } from '../../services/authApi';
 import { useAuthStore } from '../../stores/authStore';
 
@@ -16,6 +16,16 @@ export default function RegisterForm() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Password criteria
+  const hasMinLength = password.length >= 8;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[^A-Za-z0-9]/.test(password);
+
+  const passedCriteriaCount = [hasMinLength, hasUpper, hasLower, hasNumber, hasSpecial].filter(Boolean).length;
+  const isStrong = hasMinLength && (passedCriteriaCount >= 4);
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
@@ -27,6 +37,11 @@ export default function RegisterForm() {
 
     if (password.length < 8) {
       setError('Password must be at least 8 characters.');
+      return;
+    }
+
+    if (passedCriteriaCount < 3) {
+      setError('Please choose a stronger password (include uppercase, numbers, or symbols).');
       return;
     }
 
@@ -54,14 +69,14 @@ export default function RegisterForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       <div>
-        <h2 className="text-heading-sm text-[var(--text-primary)]">Create account</h2>
+        <h2 className="text-heading-sm font-bold text-[var(--text-primary)]">Create account</h2>
         <p className="mt-1 text-body-sm text-[var(--text-secondary)]">
-          Get started with Atlas in a few seconds.
+          Get started with ZeoAtlas in a few seconds.
         </p>
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 px-3 py-2.5 text-body-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
+        <div className="rounded-lg bg-red-50 px-3 py-2.5 text-body-sm text-red-700 dark:bg-red-900/20 dark:text-red-400 border border-red-500/20">
           {error}
         </div>
       )}
@@ -109,7 +124,7 @@ export default function RegisterForm() {
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 8 characters"
+              placeholder="Minimum 8 characters"
               autoComplete="new-password"
               className="focus-ring w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2 pr-10 text-body text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] transition-colors focus:border-accent"
               disabled={isLoading}
@@ -124,6 +139,39 @@ export default function RegisterForm() {
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
+
+          {/* Password strength indicators */}
+          {password.length > 0 && (
+            <div className="mt-2 space-y-1.5 rounded-lg border border-[var(--border-light)] bg-[var(--bg-secondary)] p-2.5 text-xs">
+              <div className="flex items-center justify-between text-[11px] font-medium text-[var(--text-secondary)]">
+                <span>Strength</span>
+                <span className={isStrong ? 'text-emerald-400 font-bold' : passedCriteriaCount >= 3 ? 'text-amber-400 font-medium' : 'text-red-400'}>
+                  {isStrong ? 'Strong' : passedCriteriaCount >= 3 ? 'Medium' : 'Weak'}
+                </span>
+              </div>
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-700/40">
+                <div
+                  className={`h-full transition-all duration-300 ${
+                    isStrong ? 'bg-emerald-500 w-full' : passedCriteriaCount >= 3 ? 'bg-amber-500 w-3/4' : 'bg-red-500 w-1/3'
+                  }`}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-1 pt-1 text-[11px] text-[var(--text-tertiary)]">
+                <span className={`flex items-center gap-1 ${hasMinLength ? 'text-emerald-400' : ''}`}>
+                  {hasMinLength ? <Check size={11} /> : <X size={11} />} 8+ Characters
+                </span>
+                <span className={`flex items-center gap-1 ${hasUpper && hasLower ? 'text-emerald-400' : ''}`}>
+                  {hasUpper && hasLower ? <Check size={11} /> : <X size={11} />} Upper & Lowercase
+                </span>
+                <span className={`flex items-center gap-1 ${hasNumber ? 'text-emerald-400' : ''}`}>
+                  {hasNumber ? <Check size={11} /> : <X size={11} />} Number (0-9)
+                </span>
+                <span className={`flex items-center gap-1 ${hasSpecial ? 'text-emerald-400' : ''}`}>
+                  {hasSpecial ? <Check size={11} /> : <X size={11} />} Symbol (!@#$)
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         <div>
@@ -146,7 +194,7 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="focus-ring flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-body font-medium text-white transition-colors hover:bg-accent-light disabled:opacity-50 disabled:cursor-not-allowed"
+        className="focus-ring flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-body font-medium text-white transition-colors hover:bg-accent-light disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-accent/20"
       >
         {isLoading ? (
           <>
