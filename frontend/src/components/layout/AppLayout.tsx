@@ -18,7 +18,7 @@ export default function AppLayout() {
   }, [fetchConversations]);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[var(--bg)]">
+    <div className="flex h-screen h-[100dvh] w-full overflow-hidden bg-[var(--bg)]">
       {/* Desktop sidebar */}
       <div
         className={`hidden flex-shrink-0 transition-[width] duration-200 ease-in-out md:block ${

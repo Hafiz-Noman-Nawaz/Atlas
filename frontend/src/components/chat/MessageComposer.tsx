@@ -194,7 +194,7 @@ export default function MessageComposer() {
 
   return (
     <div
-      className={`flex-shrink-0 border-t border-[var(--border)] bg-[var(--bg-composer)] p-3 sm:p-4 transition-colors ${
+      className={`border-t border-[var(--border)] bg-[var(--bg-composer)] px-2.5 pt-2 pb-2.5 sm:px-4 sm:pt-3 sm:pb-3 transition-colors ${
         isDragging ? 'bg-accent/5' : ''
       }`}
       onDragOver={handleDragOver}
@@ -203,10 +203,10 @@ export default function MessageComposer() {
     >
       <div className="mx-auto max-w-3xl">
         {/* Quick Action Prompt Chips */}
-        <div className="mb-2.5 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-          <span className="flex items-center gap-1 text-[11px] font-medium text-[var(--text-tertiary)] flex-shrink-0 pr-1">
-            <Sparkles size={12} className="text-accent" />
-            Quick:
+        <div className="mb-2 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
+          <span className="flex items-center gap-1 text-[10.5px] sm:text-[11px] font-medium text-[var(--text-tertiary)] flex-shrink-0 pr-0.5">
+            <Sparkles size={11} className="text-accent" />
+            <span className="hidden sm:inline">Quick:</span>
           </span>
           {PROMPT_CHIPS.map((chip, idx) => (
             <button
@@ -218,7 +218,7 @@ export default function MessageComposer() {
                   textareaRef.current.focus();
                 }
               }}
-              className="flex-shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-secondary)] hover:border-accent hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-all active:scale-95"
+              className="flex-shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-2.5 py-0.5 sm:py-1 text-[10.5px] sm:text-[11px] font-medium text-[var(--text-secondary)] hover:border-accent hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-all active:scale-95 shadow-2xs"
             >
               {chip.label}
             </button>
@@ -237,32 +237,32 @@ export default function MessageComposer() {
 
         {/* Attachment preview tray */}
         {attachments.length > 0 && (
-          <div className="mb-2 flex flex-wrap gap-2">
+          <div className="mb-2 flex flex-wrap gap-1.5 sm:gap-2">
             {attachments.map((att, idx) => {
               const isImg = att.type.startsWith('image/');
               return (
                 <div
                   key={idx}
-                  className="group relative flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg)] p-1.5 pr-2 shadow-sm transition-all"
+                  className="group relative flex items-center gap-1.5 sm:gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg)] p-1 sm:p-1.5 pr-2 shadow-xs transition-all"
                 >
                   {isImg ? (
                     <img
                       src={att.url}
                       alt={att.name}
-                      className="h-10 w-10 rounded object-cover border border-[var(--border-light)]"
+                      className="h-8 w-8 sm:h-10 sm:w-10 rounded object-cover border border-[var(--border-light)]"
                     />
                   ) : (
-                    <div className="flex h-10 w-10 items-center justify-center rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
-                      <FileText size={18} className="text-accent" />
+                    <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
+                      <FileText size={16} className="text-accent" />
                     </div>
                   )}
 
-                  <div className="min-w-0 max-w-[140px]">
-                    <p className="truncate text-caption font-medium text-[var(--text-primary)]">
+                  <div className="min-w-0 max-w-[110px] sm:max-w-[140px]">
+                    <p className="truncate text-[11px] sm:text-caption font-medium text-[var(--text-primary)]">
                       {att.name}
                     </p>
                     {att.size && (
-                      <p className="text-[10px] text-[var(--text-tertiary)]">
+                      <p className="text-[9px] sm:text-[10px] text-[var(--text-tertiary)]">
                         {formatFileSize(att.size)}
                       </p>
                     )}
@@ -271,7 +271,7 @@ export default function MessageComposer() {
                   <button
                     type="button"
                     onClick={() => removeAttachment(idx)}
-                    className="ml-1 rounded-full p-0.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-red-500 transition-colors"
+                    className="ml-0.5 rounded-full p-0.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-red-500 transition-colors"
                     aria-label="Remove attachment"
                     title="Remove"
                   >
@@ -285,8 +285,8 @@ export default function MessageComposer() {
 
         {/* Text Input Container */}
         <div
-          className={`flex items-end gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] px-3 py-2 transition-all ${
-            isDragging ? 'border-accent ring-2 ring-accent/20' : 'focus-within:border-accent'
+          className={`flex items-end gap-1.5 sm:gap-2 rounded-xl sm:rounded-2xl border border-[var(--border)] bg-[var(--bg)] px-2.5 py-1.5 sm:px-3 sm:py-2 transition-all shadow-xs ${
+            isDragging ? 'border-accent ring-2 ring-accent/20' : 'focus-within:border-accent focus-within:ring-1 focus-within:ring-accent/20'
           }`}
         >
           {/* File Upload Trigger */}
@@ -294,14 +294,14 @@ export default function MessageComposer() {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading || isSending}
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-accent transition-colors disabled:opacity-50"
+            className="flex h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-accent transition-colors disabled:opacity-50"
             aria-label="Attach documents or photos"
             title="Attach PDFs, DOCX, CSV, code, or photos"
           >
             {isUploading ? (
-              <Loader2 size={16} className="animate-spin text-accent" />
+              <Loader2 size={15} className="animate-spin text-accent" />
             ) : (
-              <Paperclip size={17} />
+              <Paperclip size={16} />
             )}
           </button>
 
@@ -309,7 +309,7 @@ export default function MessageComposer() {
           <button
             type="button"
             onClick={toggleListening}
-            className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-colors ${
+            className={`flex h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 items-center justify-center rounded-lg transition-colors ${
               isListening
                 ? 'bg-red-500 text-white animate-pulse'
                 : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-accent'
@@ -317,7 +317,7 @@ export default function MessageComposer() {
             aria-label="Voice dictation"
             title={isListening ? 'Stop recording' : 'Dictate with voice'}
           >
-            {isListening ? <MicOff size={16} /> : <Mic size={17} />}
+            {isListening ? <MicOff size={15} /> : <Mic size={16} />}
           </button>
 
           <textarea
@@ -331,22 +331,22 @@ export default function MessageComposer() {
             onPaste={handlePaste}
             placeholder={
               isDragging
-                ? 'Drop PDF, DOCX, or code files here...'
+                ? 'Drop files here...'
                 : isListening
                 ? 'Listening... Speak now'
-                : 'Send a message, paste screenshots (Ctrl+V), or upload PDFs...'
+                : 'Message ZeoAtlas...'
             }
             rows={1}
             disabled={isSending}
-            className="flex-1 resize-none bg-transparent text-body text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none disabled:opacity-50"
-            style={{ minHeight: '24px', maxHeight: '160px' }}
+            className="flex-1 resize-none bg-transparent text-[13.5px] sm:text-body text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none disabled:opacity-50 py-0.5 leading-relaxed"
+            style={{ minHeight: '22px', maxHeight: '140px' }}
             aria-label="Message input"
           />
 
           <button
             onClick={handleSend}
             disabled={!canSend}
-            className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-all ${
+            className={`flex h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 items-center justify-center rounded-lg transition-all ${
               canSend
                 ? 'bg-accent text-white hover:bg-accent-light active:scale-95 shadow-sm'
                 : 'bg-[var(--bg-hover)] text-[var(--text-tertiary)] cursor-not-allowed'
@@ -354,14 +354,14 @@ export default function MessageComposer() {
             aria-label="Send message"
           >
             {isSending ? (
-              <Loader2 size={16} className="animate-spin" />
+              <Loader2 size={14} className="animate-spin" />
             ) : (
-              <Send size={15} />
+              <Send size={14} />
             )}
           </button>
         </div>
 
-        <p className="mt-1.5 text-center text-[11px] text-[var(--text-tertiary)]">
+        <p className="mt-1 hidden sm:block text-center text-[11px] text-[var(--text-tertiary)]">
           Paste screenshots (<kbd className="rounded border border-[var(--border)] px-1">Ctrl+V</kbd>), upload documents (PDF/DOCX/CSV), or click 🎙️ to dictate.
         </p>
       </div>
