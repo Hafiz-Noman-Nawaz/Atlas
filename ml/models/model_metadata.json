@@ -1,8 +1,8 @@
 {
   "model_name": "Calibrated LinearSVC (L2 Regularized C=0.85, Hybrid Word+Char N-grams)",
-  "training_timestamp": "2026-08-27T11:18:59.363763+00:00",
-  "total_examples": 28475,
-  "num_intents": 35,
+  "training_timestamp": "2026-08-28T11:56:39.087909+00:00",
+  "total_examples": 29275,
+  "num_intents": 36,
   "intents": [
     "age",
     "algorithms",
@@ -30,6 +30,7 @@
     "programming",
     "python",
     "study_help",
+    "summarize_simplify",
     "system_design",
     "thanks",
     "time",

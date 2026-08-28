@@ -118,6 +118,7 @@ export const GENERATIVE_INTENTS = new Set([
   'weather',
   'time',
   'contact',
+  'summarize_simplify',
 ]);
 
 /**
@@ -159,7 +160,7 @@ function extractNameFromMessage(text) {
   const match = text.match(/(?:my name is|i am|i'm|call me|you can call me|the name is|this is|it's|everyone calls me)\s+([A-Za-z0-9_\-]+)/i);
   if (match && match[1]) {
     const raw = match[1].trim();
-    const exclude = new Set(['a', 'an', 'the', 'here', 'now', 'there', 'just', 'not', 'atlas', 'busy', 'writing', 'trying', 'building', 'asking', 'wondering', 'thinking']);
+    const exclude = new Set(['a', 'an', 'the', 'here', 'now', 'there', 'just', 'not', 'atlas', 'zeoatlas', 'busy', 'writing', 'trying', 'building', 'asking', 'wondering', 'thinking', 'it', 'line', 'sentence', 'one', 'two', 'short', 'brief']);
     if (!exclude.has(raw.toLowerCase())) {
       return raw.charAt(0).toUpperCase() + raw.slice(1);
     }
@@ -226,15 +227,11 @@ export async function routeIntent({ message, intent, confidence, conversationHis
     }
     if (onChunk) onChunk(responseText);
   }
-  // 3. User Name Declaration (Crucial profile info - saved automatically)
-  else if (normalizedIntent === 'user_name_declare' || /my name is|call me/i.test(message)) {
-    extractedName = extractNameFromMessage(message) || userContext.name || userContext.nickname;
+  // 3. User Name Declaration (Crucial profile info - saved automatically ONLY if explicit name found)
+  else if ((normalizedIntent === 'user_name_declare' || /my name is|call me/i.test(message)) && extractNameFromMessage(message)) {
+    extractedName = extractNameFromMessage(message);
     responseType = 'memory';
-    if (extractedName) {
-      responseText = `Nice to meet you, **${extractedName}**! 👋 I've saved your name to your profile and will remember it. How can I help you today?`;
-    } else {
-      responseText = `Hello! I've noted that down. What programming or machine learning questions can I help you with today?`;
-    }
+    responseText = `Nice to meet you, **${extractedName}**! 👋 I've saved your name to your profile and will remember it. How can I help you today?`;
     if (onChunk) onChunk(responseText);
   }
   // 4. User Name Query Recall
