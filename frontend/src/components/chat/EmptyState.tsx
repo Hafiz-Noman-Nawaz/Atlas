@@ -34,10 +34,8 @@ export default function EmptyState() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-3 py-4 sm:px-4 sm:pb-12 sm:pt-6 overflow-y-auto">
       {/* Brand mark */}
-      <div className="mb-3 sm:mb-5 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-accent/10">
-        <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-accent shadow-xs">
-          <span className="text-xs sm:text-sm font-bold text-white">Z</span>
-        </div>
+      <div className="mb-3 sm:mb-5 flex items-center justify-center">
+        <img src="/logo.png" alt="ZeoAtlas" className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-contain shadow-xl shadow-cyan-500/20" />
       </div>
 
       <h1 className="text-heading-md sm:text-heading-lg font-bold text-[var(--text-primary)] text-center">ZeoAtlas AI Assistant</h1>

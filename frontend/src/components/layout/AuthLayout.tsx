@@ -15,9 +15,7 @@ export default function AuthLayout() {
         {/* Brand Header */}
         <div className="mb-6 text-center">
           <div className="mb-2.5 flex items-center justify-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent shadow-lg shadow-accent/20">
-              <span className="text-base font-bold text-white">Z</span>
-            </div>
+            <img src="/logo.png" alt="ZeoAtlas" className="h-10 w-10 rounded-xl object-contain shadow-lg shadow-cyan-500/20" />
             <h1 className="text-heading-md font-bold text-[var(--text-primary)]">ZeoAtlas</h1>
           </div>
           <p className="text-body-sm text-[var(--text-secondary)]">
