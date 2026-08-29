@@ -12,10 +12,13 @@ interface ChatState {
   isSending: boolean;
   streamingContent: string;
   searchQuery: string;
+  webSearchEnabled: boolean;
   error: string | null;
 
   // Search & Filter
   setSearchQuery: (query: string) => void;
+  toggleWebSearch: () => void;
+  setWebSearchEnabled: (enabled: boolean) => void;
 
   // Conversations
   fetchConversations: () => Promise<void>;
@@ -41,9 +44,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
   isSending: false,
   streamingContent: '',
   searchQuery: '',
+  webSearchEnabled: false,
   error: null,
 
   setSearchQuery: (query: string) => set({ searchQuery: query }),
+  toggleWebSearch: () => set((s) => ({ webSearchEnabled: !s.webSearchEnabled })),
+  setWebSearchEnabled: (webSearchEnabled: boolean) => set({ webSearchEnabled }),
 
   fetchConversations: async () => {
     set({ isLoadingConversations: true });
@@ -81,39 +87,53 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   renameConversation: async (id: string, title: string) => {
-    const updated = await conversationApi.update(id, { title });
-    set((state) => ({
-      conversations: state.conversations.map((c) =>
-        c.id === id ? { ...c, title: updated.title } : c
-      ),
-    }));
+    try {
+      const updated = await conversationApi.update(id, { title });
+      set((state) => ({
+        conversations: state.conversations.map((c) => (c.id === id ? { ...c, title: updated.title } : c)),
+      }));
+    } catch {
+      set({ error: 'Failed to rename conversation.' });
+    }
   },
 
   togglePinConversation: async (id: string) => {
-    const updated = await conversationApi.togglePin(id);
-    set((state) => {
-      const nextConvs = state.conversations.map((c) =>
-        c.id === id ? { ...c, is_pinned: updated.is_pinned } : c
-      );
-      // Re-sort: pinned on top, then by updated_at
-      nextConvs.sort((a, b) => {
-        if (Boolean(b.is_pinned) !== Boolean(a.is_pinned)) {
-          return b.is_pinned ? 1 : -1;
-        }
-        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+    try {
+      const updated = await conversationApi.togglePin(id);
+      set((state) => {
+        const nextConvs = state.conversations.map((c) =>
+          c.id === id ? { ...c, is_pinned: updated.is_pinned } : c
+        );
+        // Re-sort: pinned on top, then by updated_at
+        nextConvs.sort((a, b) => {
+          if (Boolean(b.is_pinned) !== Boolean(a.is_pinned)) {
+            return b.is_pinned ? 1 : -1;
+          }
+          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+        });
+        return { conversations: nextConvs };
       });
-      return { conversations: nextConvs };
-    });
+    } catch {
+      set({ error: 'Failed to update pin status.' });
+    }
   },
 
   deleteConversation: async (id: string) => {
-    await conversationApi.delete(id);
-    const { activeConversationId } = get();
-    set((state) => ({
-      conversations: state.conversations.filter((c) => c.id !== id),
-      activeConversationId: activeConversationId === id ? null : activeConversationId,
-      messages: activeConversationId === id ? [] : state.messages,
-    }));
+    try {
+      await conversationApi.delete(id);
+      const { activeConversationId, conversations } = get();
+      const remaining = conversations.filter((c) => c.id !== id);
+      set({
+        conversations: remaining,
+        activeConversationId: activeConversationId === id ? (remaining[0]?.id ?? null) : activeConversationId,
+        messages: activeConversationId === id ? [] : get().messages,
+      });
+      if (activeConversationId === id && remaining[0]?.id) {
+        get().setActiveConversation(remaining[0].id);
+      }
+    } catch {
+      set({ error: 'Failed to delete conversation.' });
+    }
   },
 
   deleteAllConversations: async () => {
@@ -127,7 +147,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   sendMessage: async (message: string, attachments: Attachment[] = []) => {
-    const { activeConversationId } = get();
+    const { activeConversationId, webSearchEnabled } = get();
     set({ isSending: true, streamingContent: '', error: null });
 
     let currentConversationId = activeConversationId;
@@ -140,6 +160,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           conversation_id: currentConversationId,
           message,
           attachments,
+          web_search: webSearchEnabled,
         },
         (chunkText) => {
           accumulatedStreaming += chunkText;

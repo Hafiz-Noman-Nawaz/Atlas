@@ -72,6 +72,15 @@ export interface ChatRequest {
   conversation_id: string | null;
   message: string;
   attachments?: Attachment[];
+  web_search?: boolean;
+}
+
+export interface SharedChatResponse {
+  share_id: string;
+  title: string;
+  messages: Message[];
+  views: number;
+  created_at: string;
 }
 
 export interface ChatResponse {

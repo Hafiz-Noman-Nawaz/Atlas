@@ -5,8 +5,10 @@ import { useChatStore } from '../../stores/chatStore';
 import { useUiStore } from '../../stores/uiStore';
 import { AnimatePresence, motion } from 'framer-motion';
 import SettingsPanel from '../settings/SettingsPanel';
+import CanvasPanel from '../canvas/CanvasPanel';
 import DeleteDialog from '../sidebar/DeleteDialog';
 import RenameDialog from '../sidebar/RenameDialog';
+import ShareDialog from '../chat/ShareDialog';
 
 export default function AppLayout() {
   const fetchConversations = useChatStore((s) => s.fetchConversations);
@@ -63,9 +65,13 @@ export default function AppLayout() {
       {/* Settings panel */}
       <SettingsPanel />
 
+      {/* Side-by-side Code Canvas Panel */}
+      <CanvasPanel />
+
       {/* Dialogs */}
       <DeleteDialog />
       <RenameDialog />
+      <ShareDialog />
     </div>
   );
 }

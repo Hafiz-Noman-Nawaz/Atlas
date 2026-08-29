@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Copy, ThumbsUp, ThumbsDown, Check } from 'lucide-react';
+import { Copy, ThumbsUp, ThumbsDown, Check, Volume2, Square } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { chatApi } from '../../services/chatApi';
+import { useUiStore } from '../../stores/uiStore';
+import { speakMessage, stopSpeech } from '../../lib/speechSynthesis';
 import type { FeedbackRating } from '../../types';
 
 interface Props {
@@ -12,6 +14,25 @@ interface Props {
 export default function MessageActions({ messageId, content }: Props) {
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackRating | null>(null);
+  const ttsSpeakingId = useUiStore((s) => s.ttsSpeakingId);
+  const setTtsSpeakingId = useUiStore((s) => s.setTtsSpeakingId);
+
+  const isPlayingThis = ttsSpeakingId === messageId;
+
+  function toggleSpeech() {
+    if (isPlayingThis) {
+      stopSpeech();
+      setTtsSpeakingId(null);
+    } else {
+      speakMessage(
+        messageId,
+        content,
+        () => setTtsSpeakingId(messageId),
+        () => setTtsSpeakingId(null),
+        () => setTtsSpeakingId(null)
+      );
+    }
+  }
 
   async function handleCopy() {
     try {
@@ -36,7 +57,32 @@ export default function MessageActions({ messageId, content }: Props) {
   }
 
   return (
-    <div className="flex items-center gap-0.5 mt-1.5">
+    <div className="flex items-center gap-1 mt-1.5">
+      {/* Text-to-Speech Playback Button */}
+      <button
+        onClick={toggleSpeech}
+        className={`flex items-center gap-1.5 rounded-md px-1.5 py-1 text-xs transition-all ${
+          isPlayingThis
+            ? 'bg-accent/15 text-accent border border-accent/30 font-medium'
+            : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)]'
+        }`}
+        aria-label={isPlayingThis ? 'Stop listening' : 'Read aloud'}
+        title={isPlayingThis ? 'Stop voice readout' : 'Read aloud with AI voice'}
+      >
+        {isPlayingThis ? (
+          <>
+            <Square size={13} className="text-accent animate-pulse" />
+            <span className="flex items-center gap-0.5">
+              <span className="h-2 w-0.5 bg-accent animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="h-3 w-0.5 bg-accent animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="h-2 w-0.5 bg-accent animate-bounce" style={{ animationDelay: '300ms' }} />
+            </span>
+          </>
+        ) : (
+          <Volume2 size={14} />
+        )}
+      </button>
+
       <button
         onClick={handleCopy}
         className="rounded-md p-1 text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)] transition-colors"

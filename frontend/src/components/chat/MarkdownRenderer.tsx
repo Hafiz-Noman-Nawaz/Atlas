@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Check, Copy, Play, Volume2, VolumeX, X, ExternalLink, Video, Code2, BookOpen, Globe } from 'lucide-react';
+import { useUiStore } from '../../stores/uiStore';
 
 interface Props {
   content: string;
@@ -165,15 +166,19 @@ function CodeRunnerModal({
 function CodeBlock({ language, code }: { language: string; code: string }) {
   const [copied, setCopied] = useState(false);
   const [showRunner, setShowRunner] = useState(false);
+  const openCanvas = useUiStore((s) => s.openCanvas);
 
-  const isRunnable = ['javascript', 'js', 'html', 'htm', 'css'].includes(
-    (language || '').toLowerCase()
-  );
+  const lang = (language || 'code').toLowerCase();
+  const isRunnable = ['javascript', 'js', 'html', 'htm', 'css'].includes(lang);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleOpenCanvas = () => {
+    openCanvas(code, lang, `${lang.toUpperCase()} Artifact`);
   };
 
   return (
@@ -184,13 +189,24 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
           <span className="font-mono font-medium uppercase tracking-wider text-teal-400">
             {language || 'code'}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            {/* Open in Canvas Button */}
+            <button
+              onClick={handleOpenCanvas}
+              type="button"
+              className="flex items-center gap-1 rounded-md bg-teal-500/15 border border-teal-500/30 px-2 py-0.5 text-xs font-medium text-teal-300 hover:bg-teal-500/25 transition-all active:scale-95 shadow-2xs"
+              title="Open in Side-by-Side Canvas"
+            >
+              <Code2 size={12} />
+              <span>Canvas</span>
+            </button>
+
             {isRunnable && (
               <button
                 onClick={() => setShowRunner(true)}
                 type="button"
-                className="flex items-center gap-1 rounded-md bg-emerald-600/20 px-2 py-0.5 text-xs font-medium text-emerald-400 hover:bg-emerald-600/30 transition-all active:scale-95 shadow-xs"
-                title="Run in live sandbox"
+                className="flex items-center gap-1 rounded-md bg-emerald-600/20 border border-emerald-500/30 px-2 py-0.5 text-xs font-medium text-emerald-400 hover:bg-emerald-600/30 transition-all active:scale-95 shadow-2xs"
+                title="Run in live preview"
               >
                 <Play size={11} className="fill-current" />
                 <span>Run</span>

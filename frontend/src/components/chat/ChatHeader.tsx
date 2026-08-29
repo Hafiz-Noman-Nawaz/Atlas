@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { PanelLeft, Menu, Pencil, Trash2, Download, FileText, FileCode, ChevronDown } from 'lucide-react';
+import { PanelLeft, Menu, Pencil, Trash2, Download, FileText, FileCode, ChevronDown, Share2 } from 'lucide-react';
 import { useChatStore } from '../../stores/chatStore';
 import { useUiStore } from '../../stores/uiStore';
 import toast from 'react-hot-toast';
@@ -8,7 +8,7 @@ export default function ChatHeader() {
   const activeConversationId = useChatStore((s) => s.activeConversationId);
   const conversations = useChatStore((s) => s.conversations);
   const messages = useChatStore((s) => s.messages);
-  const { sidebarOpen, setSidebarOpen, toggleSidebar, setRenameDialogId, setDeleteDialogId } = useUiStore();
+  const { sidebarOpen, setSidebarOpen, toggleSidebar, setRenameDialogId, setDeleteDialogId, setShareDialogOpen } = useUiStore();
 
   const [exportOpen, setExportOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -163,6 +163,16 @@ export default function ChatHeader() {
               </div>
             )}
           </div>
+
+          {/* Share Button */}
+          <button
+            onClick={() => setShareDialogOpen(true, activeConversation.id)}
+            className="flex items-center gap-1 rounded-lg border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 text-xs font-medium text-teal-400 hover:bg-teal-500/20 hover:text-teal-300 transition-colors shadow-2xs"
+            title="Share conversation"
+          >
+            <Share2 size={13} />
+            <span className="hidden sm:inline">Share</span>
+          </button>
 
           <button
             onClick={() => setRenameDialogId(activeConversation.id)}

@@ -11,6 +11,7 @@ import ProtectedRoute from './components/layout/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ChatPage from './pages/ChatPage';
+import SharedChatPage from './pages/SharedChatPage';
 
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
 
@@ -39,6 +40,9 @@ export default function App() {
     <BrowserRouter>
       {CLERK_PUBLISHABLE_KEY && <ClerkTokenBridge />}
       <Routes>
+        {/* Public shared chat route */}
+        <Route path="/share/:shareId" element={<SharedChatPage />} />
+
         {/* Auth routes */}
         <Route element={<AuthLayout />}>
           <Route path="/login/*" element={<LoginPage />} />

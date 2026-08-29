@@ -4,6 +4,7 @@ import { User as MongoUser } from './User.js';
 import { Conversation as MongoConversation } from './Conversation.js';
 import { Message as MongoMessage } from './Message.js';
 import { Feedback as MongoFeedback } from './Feedback.js';
+import { SharedChat as MongoSharedChat } from './SharedChat.js';
 import { localDB } from './localStore.js';
 import bcrypt from 'bcryptjs';
 
@@ -339,3 +340,49 @@ export const FeedbackRepository = {
     return await localDB.createOrUpdateFeedback({ messageId, userId, rating, comment });
   },
 };
+
+const localSharedChats = new Map();
+
+export const ShareRepository = {
+  async create({ shareId, conversationId, title, messages, userId = null }) {
+    if (isMongoConnected) {
+      return await MongoSharedChat.create({
+        shareId,
+        conversationId,
+        title,
+        messages,
+        userId,
+      });
+    }
+    const doc = {
+      shareId,
+      conversationId,
+      title,
+      messages,
+      userId,
+      views: 0,
+      createdAt: new Date(),
+    };
+    localSharedChats.set(shareId, doc);
+    return doc;
+  },
+
+  async findByShareId(shareId) {
+    if (isMongoConnected) {
+      const doc = await MongoSharedChat.findOne({ shareId });
+      if (doc) {
+        doc.views = (doc.views || 0) + 1;
+        await doc.save();
+        return doc;
+      }
+      return null;
+    }
+    const doc = localSharedChats.get(shareId);
+    if (doc) {
+      doc.views = (doc.views || 0) + 1;
+      return doc;
+    }
+    return null;
+  },
+};
+

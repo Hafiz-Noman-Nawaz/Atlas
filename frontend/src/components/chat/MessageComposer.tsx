@@ -1,4 +1,4 @@
-import { Send, Loader2, Paperclip, X, FileText, Mic, MicOff, Sparkles } from 'lucide-react';
+import { Send, Loader2, Paperclip, X, FileText, Mic, MicOff, Globe } from 'lucide-react';
 import { useState, useCallback, useRef, useEffect, type KeyboardEvent, type ClipboardEvent, type ChangeEvent, type DragEvent } from 'react';
 import toast from 'react-hot-toast';
 import { useChatStore } from '../../stores/chatStore';
@@ -16,7 +16,7 @@ const PROMPT_CHIPS = [
 ];
 
 export default function MessageComposer() {
-  const { sendMessage, isSending } = useChatStore();
+  const { sendMessage, isSending, webSearchEnabled, toggleWebSearch } = useChatStore();
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -202,12 +202,25 @@ export default function MessageComposer() {
       onDrop={handleDrop}
     >
       <div className="mx-auto max-w-3xl">
-        {/* Quick Action Prompt Chips */}
+        {/* Quick Action Prompt Chips + Live Web Search Toggle */}
         <div className="mb-2 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
-          <span className="flex items-center gap-1 text-[10.5px] sm:text-[11px] font-medium text-[var(--text-tertiary)] flex-shrink-0 pr-0.5">
-            <Sparkles size={11} className="text-accent" />
-            <span className="hidden sm:inline">Quick:</span>
-          </span>
+          {/* Live Web Search Grounding Toggle */}
+          <button
+            type="button"
+            onClick={toggleWebSearch}
+            className={`flex-shrink-0 flex items-center gap-1.5 rounded-full px-3 py-0.5 sm:py-1 text-[11px] font-medium transition-all shadow-2xs ${
+              webSearchEnabled
+                ? 'bg-sky-500/20 text-sky-300 border border-sky-500/50 shadow-sky-500/10'
+                : 'border border-[var(--border)] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:border-slate-600'
+            }`}
+            title={webSearchEnabled ? 'Live Web Search is ON' : 'Enable live Google search grounding'}
+          >
+            <Globe size={12} className={webSearchEnabled ? 'text-sky-400 animate-spin-slow' : 'text-slate-400'} />
+            <span>Web Search {webSearchEnabled ? 'ON' : 'OFF'}</span>
+          </button>
+
+          <span className="h-3 w-px bg-[var(--border)] flex-shrink-0 mx-0.5" />
+
           {PROMPT_CHIPS.map((chip, idx) => (
             <button
               key={idx}

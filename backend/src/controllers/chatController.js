@@ -1,5 +1,6 @@
-import { UserRepository, ConversationRepository, MessageRepository } from '../models/repository.js';
+import { UserRepository, ConversationRepository, MessageRepository, ShareRepository } from '../models/repository.js';
 import { getChatbotResponse } from '../services/chatbotService.js';
+import crypto from 'crypto';
 
 /**
  * @route   POST /api/chat
@@ -8,7 +9,7 @@ import { getChatbotResponse } from '../services/chatbotService.js';
  */
 export async function sendMessage(req, res, next) {
   try {
-    const { conversation_id, message, attachments = [] } = req.body;
+    const { conversation_id, message, attachments = [], web_search = false } = req.body;
     const userId = req.user._id || req.user.id;
 
     const textContent = (message && message.trim()) || '';
@@ -67,7 +68,7 @@ export async function sendMessage(req, res, next) {
     }
 
     const promptForBot = (textContent + docContext) || (attachments.length > 0 ? `[User uploaded: ${attachments.map(a => a.name).join(', ')}]` : '');
-    const botResponse = await getChatbotResponse(promptForBot, historyContext, userContext);
+    const botResponse = await getChatbotResponse(promptForBot, historyContext, userContext, null, Boolean(web_search));
 
     // 4b. Auto-persist crucial user profile info (name/nickname)
     if (botResponse.extractedName) {
@@ -111,7 +112,7 @@ export async function sendMessage(req, res, next) {
  */
 export async function sendMessageStream(req, res, next) {
   try {
-    const { conversation_id, message, attachments = [] } = req.body;
+    const { conversation_id, message, attachments = [], web_search = false } = req.body;
     const userId = req.user._id || req.user.id;
 
     const textContent = (message && message.trim()) || '';
@@ -192,7 +193,8 @@ export async function sendMessageStream(req, res, next) {
       userContext,
       (chunk) => {
         res.write(`data: ${JSON.stringify({ type: 'chunk', text: chunk })}\n\n`);
-      }
+      },
+      Boolean(web_search)
     );
 
     // 5b. Memory Persistence
@@ -263,3 +265,65 @@ export async function getMessages(req, res, next) {
     next(error);
   }
 }
+
+/**
+ * @route   POST /api/chat/:id/share
+ * @desc    Create an anonymized public share snapshot of a conversation
+ * @access  Private
+ */
+export async function createShareLink(req, res, next) {
+  try {
+    const userId = req.user._id || req.user.id;
+    const conversation = await ConversationRepository.getById(req.params.id, userId);
+
+    if (!conversation) {
+      return res.status(404).json({ detail: 'Conversation not found.' });
+    }
+
+    const messages = await MessageRepository.listByConversation(conversation._id || conversation.id, 0, 100);
+    const shareId = crypto.randomBytes(6).toString('hex');
+
+    const shareDoc = await ShareRepository.create({
+      shareId,
+      conversationId: (conversation._id || conversation.id).toString(),
+      title: conversation.title || 'Shared Chat',
+      messages: messages.map((m) => (typeof m.toJSON === 'function' ? m.toJSON() : m)),
+      userId: userId.toString(),
+    });
+
+    return res.json({
+      share_id: shareId,
+      share_url: `/share/${shareId}`,
+      title: shareDoc.title,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * @route   GET /api/chat/public/share/:shareId
+ * @desc    Retrieve public read-only shared conversation
+ * @access  Public
+ */
+export async function getSharedConversation(req, res, next) {
+  try {
+    const { shareId } = req.params;
+    const shared = await ShareRepository.findByShareId(shareId);
+
+    if (!shared) {
+      return res.status(404).json({ detail: 'Shared conversation not found or expired.' });
+    }
+
+    return res.json({
+      share_id: shared.shareId,
+      title: shared.title,
+      messages: shared.messages,
+      views: shared.views || 1,
+      created_at: shared.createdAt || shared.created_at,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+

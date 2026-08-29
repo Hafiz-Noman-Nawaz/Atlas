@@ -69,9 +69,9 @@ const MODEL_FALLBACK_CHAIN = [
 ];
 
 /**
- * Generates an LLM response using Google Gemini API with automatic model failover.
+ * Generates an LLM response using Google Gemini API with automatic model failover and optional Web Search Grounding.
  */
-export async function generateResponse(prompt, intent, confidence, conversationHistory = []) {
+export async function generateResponse(prompt, intent, confidence, conversationHistory = [], webSearch = false) {
   const client = getGeminiClient();
 
   if (!client) {
@@ -83,7 +83,11 @@ export async function generateResponse(prompt, intent, confidence, conversationH
     );
   }
 
-  const systemInstruction = buildSystemInstruction(intent);
+  let systemInstruction = buildSystemInstruction(intent);
+  if (webSearch) {
+    systemInstruction += '\n\n• Ground your response using real-time Google Search results. Cite source links and provide current, up-to-date facts.';
+  }
+
   const historyContents = formatHistory(conversationHistory);
   const contents = [
     ...historyContents,
@@ -97,15 +101,21 @@ export async function generateResponse(prompt, intent, confidence, conversationH
 
   for (const model of uniqueModels) {
     try {
+      const config = {
+        systemInstruction: {
+          parts: [{ text: systemInstruction }],
+        },
+        temperature: webSearch ? 0.4 : 0.7,
+      };
+
+      if (webSearch) {
+        config.tools = [{ googleSearch: {} }];
+      }
+
       const response = await client.models.generateContent({
         model,
         contents,
-        config: {
-          systemInstruction: {
-            parts: [{ text: systemInstruction }],
-          },
-          temperature: 0.7,
-        },
+        config,
       });
 
       const outputText = response.text ? response.text.trim() : '';
@@ -126,25 +136,22 @@ export async function generateResponse(prompt, intent, confidence, conversationH
 }
 
 /**
- * Generates an LLM response via token streaming (SSE).
- * 
- * @param {string} prompt - User message / prompt
- * @param {string} intent - Predicted intent
- * @param {number} confidence - Confidence score
- * @param {Array} conversationHistory - Past messages
- * @param {Function} onChunk - Callback invoked for each streamed token chunk: (chunkText) => void
- * @returns {Promise<string>} Complete aggregated response text
+ * Generates an LLM response via token streaming (SSE) with optional Google Search Grounding.
  */
-export async function generateStreamResponse(prompt, intent, confidence, conversationHistory = [], onChunk = () => {}) {
+export async function generateStreamResponse(prompt, intent, confidence, conversationHistory = [], onChunk = () => {}, webSearch = false) {
   const client = getGeminiClient();
 
   if (!client) {
-    const fallbackText = await generateResponse(prompt, intent, confidence, conversationHistory);
+    const fallbackText = await generateResponse(prompt, intent, confidence, conversationHistory, webSearch);
     onChunk(fallbackText);
     return fallbackText;
   }
 
-  const systemInstruction = buildSystemInstruction(intent);
+  let systemInstruction = buildSystemInstruction(intent);
+  if (webSearch) {
+    systemInstruction += '\n\n• Ground your response using real-time Google Search results. Cite source links and provide current, up-to-date facts.';
+  }
+
   const historyContents = formatHistory(conversationHistory);
   const contents = [
     ...historyContents,
@@ -159,15 +166,21 @@ export async function generateStreamResponse(prompt, intent, confidence, convers
 
   for (const model of uniqueModels) {
     try {
+      const config = {
+        systemInstruction: {
+          parts: [{ text: systemInstruction }],
+        },
+        temperature: webSearch ? 0.4 : 0.7,
+      };
+
+      if (webSearch) {
+        config.tools = [{ googleSearch: {} }];
+      }
+
       const stream = await client.models.generateContentStream({
         model,
         contents,
-        config: {
-          systemInstruction: {
-            parts: [{ text: systemInstruction }],
-          },
-          temperature: 0.7,
-        },
+        config,
       });
 
       for await (const chunk of stream) {
@@ -182,9 +195,15 @@ export async function generateStreamResponse(prompt, intent, confidence, convers
         return fullAccumulatedText.trim();
       }
     } catch (error) {
-      console.warn(`[LLM Stream Error] Model "${model}" failed: ${error.message}. Trying next model...`);
+      console.warn(`[LLM Stream Error] Model "${model}" (webSearch: ${webSearch}) failed: ${error.message}. Trying next model...`);
     }
   }
+
+  // Fallback to synchronous generation if stream failed
+  const fallback = await generateResponse(prompt, intent, confidence, conversationHistory, webSearch);
+  onChunk(fallback);
+  return fallback;
+}
 
   // Fallback to synchronous generation if stream failed
   const fallback = await generateResponse(prompt, intent, confidence, conversationHistory);

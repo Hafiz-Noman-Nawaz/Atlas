@@ -10,6 +10,17 @@ interface UiState {
   settingsOpen: boolean;
   deleteDialogId: string | null;
   renameDialogId: string | null;
+  shareDialogOpen: boolean;
+  shareDialogConversationId: string | null;
+
+  // Code Canvas Panel State
+  canvasOpen: boolean;
+  canvasCode: string;
+  canvasLanguage: string;
+  canvasTitle: string;
+
+  // Text to Speech State
+  ttsSpeakingId: string | null;
 
   // Preferences
   soundEnabled: boolean;
@@ -23,6 +34,16 @@ interface UiState {
   setSettingsOpen: (open: boolean) => void;
   setDeleteDialogId: (id: string | null) => void;
   setRenameDialogId: (id: string | null) => void;
+  setShareDialogOpen: (open: boolean, convId?: string | null) => void;
+
+  // Canvas methods
+  openCanvas: (code: string, language: string, title?: string) => void;
+  closeCanvas: () => void;
+  setCanvasCode: (code: string) => void;
+
+  // TTS methods
+  setTtsSpeakingId: (id: string | null) => void;
+
   setSoundEnabled: (enabled: boolean) => void;
   setSendOnEnter: (send: boolean) => void;
   setAiCreativity: (creativity: Creativity) => void;
@@ -45,6 +66,17 @@ export const useUiStore = create<UiState>((set, get) => ({
   settingsOpen: false,
   deleteDialogId: null,
   renameDialogId: null,
+  shareDialogOpen: false,
+  shareDialogConversationId: null,
+
+  // Canvas
+  canvasOpen: false,
+  canvasCode: '',
+  canvasLanguage: 'html',
+  canvasTitle: 'Code Sandbox',
+
+  // TTS
+  ttsSpeakingId: null,
 
   soundEnabled: localStorage.getItem('atlas_sound') !== 'false',
   sendOnEnter: localStorage.getItem('atlas_send_on_enter') !== 'false',
@@ -63,6 +95,19 @@ export const useUiStore = create<UiState>((set, get) => ({
   setSettingsOpen: (open) => set({ settingsOpen: open }),
   setDeleteDialogId: (id) => set({ deleteDialogId: id }),
   setRenameDialogId: (id) => set({ renameDialogId: id }),
+  setShareDialogOpen: (open, convId = null) => set({ shareDialogOpen: open, shareDialogConversationId: convId }),
+
+  openCanvas: (code, language, title = 'Code Sandbox') =>
+    set({
+      canvasOpen: true,
+      canvasCode: code,
+      canvasLanguage: language.toLowerCase(),
+      canvasTitle: title,
+    }),
+  closeCanvas: () => set({ canvasOpen: false }),
+  setCanvasCode: (code) => set({ canvasCode: code }),
+
+  setTtsSpeakingId: (id) => set({ ttsSpeakingId: id }),
 
   setSoundEnabled: (soundEnabled) => {
     localStorage.setItem('atlas_sound', String(soundEnabled));

@@ -1,0 +1,25 @@
+{
+  "short_name": "ZeoAtlas",
+  "name": "ZeoAtlas AI — Intelligent Assistant",
+  "description": "High-intelligence conversational AI assistant specialized in software engineering and machine learning.",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "type": "image/png",
+      "sizes": "256x256",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#090d16",
+  "theme_color": "#0ea5e9",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/"
+}

@@ -193,7 +193,7 @@ function extractExplicitMemoryNote(text) {
  * @param {Object} [params.userContext] - User profile info (nickname, name, customMemories)
  * @returns {Promise<{ message: string, intent: string, confidence: number, responseType: string, response: string, extractedName?: string, extractedMemory?: string }>}
  */
-export async function routeIntent({ message, intent, confidence, conversationHistory = [], userContext = {}, onChunk = null }) {
+export async function routeIntent({ message, intent, confidence, conversationHistory = [], userContext = {}, onChunk = null, webSearch = false }) {
   const normalizedIntent = (intent || 'unknown').toLowerCase().trim();
   const threshold = parseFloat(process.env.ML_CONFIDENCE_THRESHOLD || '0.50');
   const isConfident = confidence >= threshold && normalizedIntent !== 'unknown';
@@ -252,8 +252,8 @@ export async function routeIntent({ message, intent, confidence, conversationHis
     responseText = pool[0];
     if (onChunk) onChunk(responseText);
   }
-  // 6. Predefined Conversational & Feature intents
-  else if (isConfident && SIMPLE_INTENTS.has(normalizedIntent)) {
+  // 6. Predefined Conversational & Feature intents (unless web search is explicitly forced)
+  else if (isConfident && SIMPLE_INTENTS.has(normalizedIntent) && !webSearch) {
     responseType = 'predefined';
     const pool = PREDEFINED_RESPONSES[normalizedIntent];
     responseText = pool[Math.floor(Math.random() * pool.length)];
@@ -263,25 +263,25 @@ export async function routeIntent({ message, intent, confidence, conversationHis
   else if (isConfident && GENERATIVE_INTENTS.has(normalizedIntent)) {
     responseType = 'llm';
     if (onChunk) {
-      responseText = await generateLLMStreamResponse(message, normalizedIntent, confidence, conversationHistory, onChunk);
+      responseText = await generateLLMStreamResponse(message, normalizedIntent, confidence, conversationHistory, onChunk, webSearch);
     } else {
-      responseText = await generateLLMResponse(message, normalizedIntent, confidence, conversationHistory);
+      responseText = await generateLLMResponse(message, normalizedIntent, confidence, conversationHistory, webSearch);
     }
   }
   // 8. Unclassified / Low Confidence
   else {
-    if (isGibberishOrSpam(message)) {
+    if (isGibberishOrSpam(message) && !webSearch) {
       responseType = 'fallback';
       responseText = FALLBACK_RESPONSES[0];
       if (onChunk) onChunk(responseText);
     } else {
       try {
         responseType = 'llm';
-        console.log(`[Intent Router] 🌐 Routing out-of-vocabulary natural query to Gemini LLM`);
+        console.log(`[Intent Router] 🌐 Routing query to Gemini LLM (webSearch: ${webSearch})`);
         if (onChunk) {
-          responseText = await generateLLMStreamResponse(message, 'general_assistant', 0.90, conversationHistory, onChunk);
+          responseText = await generateLLMStreamResponse(message, 'general_assistant', 0.90, conversationHistory, onChunk, webSearch);
         } else {
-          responseText = await generateLLMResponse(message, 'general_assistant', 0.90, conversationHistory);
+          responseText = await generateLLMResponse(message, 'general_assistant', 0.90, conversationHistory, webSearch);
         }
       } catch (err) {
         console.warn(`[Intent Router] LLM generation failed, providing capabilities brief:`, err.message);

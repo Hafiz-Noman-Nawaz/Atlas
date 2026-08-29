@@ -102,4 +102,14 @@ export const chatApi = {
     const res = await api.post<FeedbackResponse>(`/messages/${messageId}/feedback`, data);
     return res.data;
   },
+
+  createShareLink: async (conversationId: string): Promise<{ share_id: string; share_url: string; title: string }> => {
+    const res = await api.post<{ share_id: string; share_url: string; title: string }>(`/chat/${conversationId}/share`);
+    return res.data;
+  },
+
+  getSharedChat: async (shareId: string): Promise<any> => {
+    const res = await api.get<any>(`/chat/public/share/${shareId}`);
+    return res.data;
+  },
 };

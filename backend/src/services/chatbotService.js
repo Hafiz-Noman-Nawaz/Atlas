@@ -10,7 +10,7 @@ import { routeIntent } from './intentRouter.js';
  * @param {Function} [onChunk] - Token streaming callback: (chunkText) => void
  * @returns {Promise<{ message: string, intent: string, confidence: number, responseType: string, response: string, raw_intent: string, is_confident: boolean, extractedName?: string, extractedMemory?: string }>}
  */
-export async function getChatbotResponse(userMessage, conversationHistory = [], userContext = {}, onChunk = null) {
+export async function getChatbotResponse(userMessage, conversationHistory = [], userContext = {}, onChunk = null, webSearch = false) {
   try {
     // 1. Predict intent using the trained Python ML model
     const prediction = await predictIntent(userMessage);
@@ -23,6 +23,7 @@ export async function getChatbotResponse(userMessage, conversationHistory = [], 
       conversationHistory,
       userContext,
       onChunk,
+      webSearch,
     });
 
     return {
