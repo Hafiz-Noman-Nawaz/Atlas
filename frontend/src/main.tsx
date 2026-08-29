@@ -7,11 +7,18 @@ import './index.css';
 
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
 
+// Auto-recover from stale dynamic chunk caches on new deployment
+window.addEventListener('vite:preloadError', () => {
+  window.location.reload();
+});
+
 // Register PWA service worker in production/browser
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch((err) => {
-      console.info('[PWA] Service worker registration note:', err);
+    navigator.serviceWorker.register('/sw.js').then((reg) => {
+      reg.update();
+    }).catch((err) => {
+      console.info('[PWA] Service worker note:', err);
     });
   });
 }
