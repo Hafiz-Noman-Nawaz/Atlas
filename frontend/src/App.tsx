@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useAuth } from '@clerk/clerk-react';
@@ -8,12 +8,26 @@ import { setAuthTokenGetter } from './services/api';
 import AuthLayout from './components/layout/AuthLayout';
 import AppLayout from './components/layout/AppLayout';
 import ProtectedRoute from './components/layout/ProtectedRoute';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import ChatPage from './pages/ChatPage';
-import SharedChatPage from './pages/SharedChatPage';
+import { Loader2 } from 'lucide-react';
+
+// Code-split page components for fast initial load
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+const ChatPage = lazy(() => import('./pages/ChatPage'));
+const SharedChatPage = lazy(() => import('./pages/SharedChatPage'));
 
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
+
+function PageFallback() {
+  return (
+    <div className="flex h-screen w-full items-center justify-center bg-[#090d16] text-white">
+      <div className="flex flex-col items-center gap-3">
+        <Loader2 size={28} className="animate-spin text-teal-400" />
+        <span className="text-xs text-slate-400 font-medium tracking-wide">Loading ZeoAtlas...</span>
+      </div>
+    </div>
+  );
+}
 
 function ClerkTokenBridge() {
   const { getToken } = useAuth();
@@ -39,26 +53,28 @@ export default function App() {
   return (
     <BrowserRouter>
       {CLERK_PUBLISHABLE_KEY && <ClerkTokenBridge />}
-      <Routes>
-        {/* Public shared chat route */}
-        <Route path="/share/:shareId" element={<SharedChatPage />} />
+      <Suspense fallback={<PageFallback />}>
+        <Routes>
+          {/* Public shared chat route */}
+          <Route path="/share/:shareId" element={<SharedChatPage />} />
 
-        {/* Auth routes */}
-        <Route element={<AuthLayout />}>
-          <Route path="/login/*" element={<LoginPage />} />
-          <Route path="/register/*" element={<RegisterPage />} />
-        </Route>
-
-        {/* Protected app routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<ChatPage />} />
+          {/* Auth routes */}
+          <Route element={<AuthLayout />}>
+            <Route path="/login/*" element={<LoginPage />} />
+            <Route path="/register/*" element={<RegisterPage />} />
           </Route>
-        </Route>
 
-        {/* Catch-all redirect */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Protected app routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AppLayout />}>
+              <Route path="/" element={<ChatPage />} />
+            </Route>
+          </Route>
+
+          {/* Catch-all redirect */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
 
       <Toaster
         position="top-right"

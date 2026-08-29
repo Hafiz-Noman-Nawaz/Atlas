@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Check, Copy, Play, Volume2, VolumeX, X, ExternalLink, Video, Code2, BookOpen, Globe } from 'lucide-react';
@@ -250,7 +250,7 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
   );
 }
 
-export default function MarkdownRenderer({ content, showAudioReadout = true }: Props) {
+function MarkdownRendererComponent({ content, showAudioReadout = true }: Props) {
   const [isSpeaking, setIsSpeaking] = useState(false);
 
   const toggleSpeech = () => {
@@ -392,3 +392,6 @@ export default function MarkdownRenderer({ content, showAudioReadout = true }: P
     </div>
   );
 }
+
+const MarkdownRenderer = memo(MarkdownRendererComponent);
+export default MarkdownRenderer;

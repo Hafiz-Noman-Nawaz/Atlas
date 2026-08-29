@@ -1,5 +1,5 @@
 import { MessageSquare, MoreHorizontal, Pencil, Trash2, Pin, PinOff, Star } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
 import type { Conversation } from '../../types';
 import { useChatStore } from '../../stores/chatStore';
 import { useUiStore } from '../../stores/uiStore';
@@ -10,7 +10,7 @@ interface Props {
   isActive: boolean;
 }
 
-export default function ConversationItem({ conversation, isActive }: Props) {
+function ConversationItemComponent({ conversation, isActive }: Props) {
   const setActiveConversation = useChatStore((s) => s.setActiveConversation);
   const togglePinConversation = useChatStore((s) => s.togglePinConversation);
   const setSidebarOpen = useUiStore((s) => s.setSidebarOpen);
@@ -129,3 +129,15 @@ export default function ConversationItem({ conversation, isActive }: Props) {
     </div>
   );
 }
+
+const ConversationItem = memo(ConversationItemComponent, (prev, next) => {
+  return (
+    prev.conversation.id === next.conversation.id &&
+    prev.conversation.title === next.conversation.title &&
+    prev.conversation.updated_at === next.conversation.updated_at &&
+    prev.conversation.is_pinned === next.conversation.is_pinned &&
+    prev.isActive === next.isActive
+  );
+});
+
+export default ConversationItem;

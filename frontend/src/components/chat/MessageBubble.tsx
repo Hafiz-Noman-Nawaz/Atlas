@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Tag, FileText, Code, ExternalLink } from 'lucide-react';
 import type { Message } from '../../types';
@@ -10,7 +11,7 @@ interface Props {
   index: number;
 }
 
-export default function MessageBubble({ message, index }: Props) {
+function MessageBubbleComponent({ message, index }: Props) {
   const isUser = message.role === 'user';
   const attachments = message.attachments || [];
 
@@ -25,7 +26,7 @@ export default function MessageBubble({ message, index }: Props) {
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, delay: Math.min(index * 0.02, 0.2) }}
+      transition={{ duration: 0.2, delay: Math.min(index * 0.01, 0.15) }}
       className={`group flex gap-3 px-4 py-3 sm:px-6 ${isUser ? 'justify-end' : 'justify-start'}`}
     >
       {/* Assistant avatar */}
@@ -142,3 +143,15 @@ export default function MessageBubble({ message, index }: Props) {
     </motion.div>
   );
 }
+
+// Memoize MessageBubble to eliminate unnecessary re-renders during live token streaming
+const MessageBubble = memo(MessageBubbleComponent, (prev, next) => {
+  return (
+    prev.message.id === next.message.id &&
+    prev.message.content === next.message.content &&
+    prev.index === next.index &&
+    prev.message.intent === next.message.intent
+  );
+});
+
+export default MessageBubble;

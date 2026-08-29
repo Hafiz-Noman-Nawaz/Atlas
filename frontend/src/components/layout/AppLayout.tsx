@@ -1,14 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../sidebar/Sidebar';
 import { useChatStore } from '../../stores/chatStore';
 import { useUiStore } from '../../stores/uiStore';
 import { AnimatePresence, motion } from 'framer-motion';
-import SettingsPanel from '../settings/SettingsPanel';
-import CanvasPanel from '../canvas/CanvasPanel';
 import DeleteDialog from '../sidebar/DeleteDialog';
 import RenameDialog from '../sidebar/RenameDialog';
-import ShareDialog from '../chat/ShareDialog';
+
+// Lazy load auxiliary overlays so main chat opens with near-zero latency
+const SettingsPanel = lazy(() => import('../settings/SettingsPanel'));
+const CanvasPanel = lazy(() => import('../canvas/CanvasPanel'));
+const ShareDialog = lazy(() => import('../chat/ShareDialog'));
 
 export default function AppLayout() {
   const fetchConversations = useChatStore((s) => s.fetchConversations);
@@ -62,16 +64,16 @@ export default function AppLayout() {
         <Outlet />
       </div>
 
-      {/* Settings panel */}
-      <SettingsPanel />
+      {/* Auxiliary overlays loaded on demand */}
+      <Suspense fallback={null}>
+        <SettingsPanel />
+        <CanvasPanel />
+        <ShareDialog />
+      </Suspense>
 
-      {/* Side-by-side Code Canvas Panel */}
-      <CanvasPanel />
-
-      {/* Dialogs */}
+      {/* Lightweight dialogs */}
       <DeleteDialog />
       <RenameDialog />
-      <ShareDialog />
     </div>
   );
 }

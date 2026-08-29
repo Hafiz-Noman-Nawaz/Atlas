@@ -54,8 +54,8 @@ app.use(
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
-// Serve local uploads statically
-app.use('/uploads', express.static(uploadsDir));
+// Serve local uploads statically with aggressive browser caching
+app.use('/uploads', express.static(uploadsDir, { maxAge: '7d', immutable: true }));
 
 // Health Check Endpoint
 app.get('/api/health', (req, res) => {
