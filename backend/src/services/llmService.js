@@ -205,8 +205,3 @@ export async function generateStreamResponse(prompt, intent, confidence, convers
   return fallback;
 }
 
-  // Fallback to synchronous generation if stream failed
-  const fallback = await generateResponse(prompt, intent, confidence, conversationHistory);
-  onChunk(fallback);
-  return fallback;
-}

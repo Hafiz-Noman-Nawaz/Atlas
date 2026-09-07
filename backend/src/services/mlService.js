@@ -23,6 +23,16 @@ function resolvePredictScriptPath() {
   return path.resolve(path.join(process.cwd(), '..', 'ml', 'predict_api.py'));
 }
 
+function isPythonAvailable() {
+  if (process.env.VERCEL) return false;
+  try {
+    const scriptPath = resolvePredictScriptPath();
+    return fs.existsSync(scriptPath);
+  } catch {
+    return false;
+  }
+}
+
 class PythonMLWorker {
   constructor() {
     this.process = null;
@@ -34,6 +44,10 @@ class PythonMLWorker {
   }
 
   init() {
+    if (!isPythonAvailable()) {
+      return Promise.resolve(false);
+    }
+
     if (this.initPromise) return this.initPromise;
 
     this.initPromise = new Promise((resolve) => {
@@ -160,8 +174,10 @@ class PythonMLWorker {
 }
 
 const worker = new PythonMLWorker();
-// Warm up worker in background
-worker.init().catch(() => {});
+// Warm up worker in background (only when running full local/container server with Python)
+if (!process.env.VERCEL) {
+  worker.init().catch(() => {});
+}
 
 /**
  * Predicts the intent and confidence of a given user message using the Python ML model.
