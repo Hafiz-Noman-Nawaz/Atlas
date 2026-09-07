@@ -75,6 +75,9 @@ app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 // Serve local uploads statically with browser caching
 app.use('/uploads', express.static(uploadsDir, { maxAge: '7d', immutable: true }));
 
+// Favicon handler
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 // Root Status Endpoint
 app.get('/', (req, res) => {
   res.json({
