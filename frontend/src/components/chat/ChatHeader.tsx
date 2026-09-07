@@ -6,8 +6,10 @@ import toast from 'react-hot-toast';
 
 export default function ChatHeader() {
   const activeConversationId = useChatStore((s) => s.activeConversationId);
-  const conversations = useChatStore((s) => s.conversations);
-  const messages = useChatStore((s) => s.messages);
+  const rawConversations = useChatStore((s) => s.conversations);
+  const conversations = Array.isArray(rawConversations) ? rawConversations : [];
+  const rawMessages = useChatStore((s) => s.messages);
+  const messages = Array.isArray(rawMessages) ? rawMessages : [];
   const { sidebarOpen, setSidebarOpen, toggleSidebar, setRenameDialogId, setDeleteDialogId, setShareDialogOpen } = useUiStore();
 
   const [exportOpen, setExportOpen] = useState(false);

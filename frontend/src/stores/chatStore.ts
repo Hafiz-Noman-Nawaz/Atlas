@@ -55,9 +55,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({ isLoadingConversations: true });
     try {
       const data = await conversationApi.list();
-      set({ conversations: data.items, isLoadingConversations: false });
+      const items = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.items)
+        ? data.items
+        : [];
+      set({ conversations: items, isLoadingConversations: false });
     } catch {
-      set({ isLoadingConversations: false, error: 'Failed to load conversations.' });
+      set({ conversations: [], isLoadingConversations: false, error: 'Failed to load conversations.' });
     }
   },
 
@@ -68,29 +73,50 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({ isLoadingMessages: true });
     try {
       const messages = await chatApi.getMessages(id);
-      set({ messages: Array.isArray(messages) ? messages : [], isLoadingMessages: false });
+      const msgList = Array.isArray(messages)
+        ? messages
+        : Array.isArray((messages as any)?.items)
+        ? (messages as any).items
+        : [];
+      set({ messages: msgList, isLoadingMessages: false });
     } catch {
-      set({ isLoadingMessages: false, error: 'Failed to load messages.' });
+      set({ messages: [], isLoadingMessages: false, error: 'Failed to load messages.' });
     }
   },
 
   createConversation: async () => {
-    const conv = await conversationApi.create();
-    set((state) => ({
-      conversations: [conv, ...state.conversations],
-      activeConversationId: conv.id,
-      messages: [],
-      streamingContent: '',
-      error: null,
-    }));
-    return conv;
+    try {
+      const conv = await conversationApi.create();
+      set((state) => ({
+        conversations: [conv, ...(state.conversations || [])],
+        activeConversationId: conv.id,
+        messages: [],
+        streamingContent: '',
+        error: null,
+      }));
+      return conv;
+    } catch {
+      const fallbackConv: Conversation = {
+        id: `local-${Date.now()}`,
+        title: 'New Conversation',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      set((state) => ({
+        conversations: [fallbackConv, ...(state.conversations || [])],
+        activeConversationId: fallbackConv.id,
+        messages: [],
+        streamingContent: '',
+      }));
+      return fallbackConv;
+    }
   },
 
   renameConversation: async (id: string, title: string) => {
     try {
       const updated = await conversationApi.update(id, { title });
       set((state) => ({
-        conversations: state.conversations.map((c) => (c.id === id ? { ...c, title: updated.title } : c)),
+        conversations: (state.conversations || []).map((c) => (c.id === id ? { ...c, title: updated.title } : c)),
       }));
     } catch {
       set({ error: 'Failed to rename conversation.' });
@@ -101,7 +127,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     try {
       const updated = await conversationApi.togglePin(id);
       set((state) => {
-        const nextConvs = state.conversations.map((c) =>
+        const nextConvs = (state.conversations || []).map((c) =>
           c.id === id ? { ...c, is_pinned: updated.is_pinned } : c
         );
         // Re-sort: pinned on top, then by updated_at
@@ -121,12 +147,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
   deleteConversation: async (id: string) => {
     try {
       await conversationApi.delete(id);
-      const { activeConversationId, conversations } = get();
-      const remaining = conversations.filter((c) => c.id !== id);
+      const { activeConversationId, conversations = [] } = get();
+      const remaining = (conversations || []).filter((c) => c.id !== id);
       set({
         conversations: remaining,
         activeConversationId: activeConversationId === id ? (remaining[0]?.id ?? null) : activeConversationId,
-        messages: activeConversationId === id ? [] : get().messages,
+        messages: activeConversationId === id ? [] : get().messages || [],
       });
       if (activeConversationId === id && remaining[0]?.id) {
         get().setActiveConversation(remaining[0].id);
@@ -137,7 +163,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   deleteAllConversations: async () => {
-    await conversationApi.deleteAll();
+    try {
+      await conversationApi.deleteAll();
+    } catch {
+      // Ignored
+    }
     set({
       conversations: [],
       activeConversationId: null,

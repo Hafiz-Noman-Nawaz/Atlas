@@ -25,7 +25,7 @@ export default function CanvasPanel() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const isRunnableWeb = ['html', 'jsx', 'tsx', 'javascript', 'js', 'css'].includes(
-    canvasLanguage.toLowerCase()
+    (canvasLanguage || '').toLowerCase()
   );
 
   // Set default tab: if HTML/JS show preview, else show code

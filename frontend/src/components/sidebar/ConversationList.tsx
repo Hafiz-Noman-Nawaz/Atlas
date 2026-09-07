@@ -6,13 +6,14 @@ interface Props {
 }
 
 export default function ConversationList({ searchFilter }: Props) {
-  const { conversations, activeConversationId, isLoadingConversations } = useChatStore();
+  const { conversations = [], activeConversationId, isLoadingConversations } = useChatStore();
+  const convList = Array.isArray(conversations) ? conversations : [];
 
-  const filtered = searchFilter.trim()
-    ? conversations.filter((c) =>
-        c.title.toLowerCase().includes(searchFilter.toLowerCase())
+  const filtered = searchFilter && searchFilter.trim()
+    ? convList.filter((c) =>
+        c && c.title && c.title.toLowerCase().includes(searchFilter.toLowerCase())
       )
-    : conversations;
+    : convList;
 
   if (isLoadingConversations) {
     return (
@@ -28,7 +29,7 @@ export default function ConversationList({ searchFilter }: Props) {
     );
   }
 
-  if (filtered.length === 0 && searchFilter.trim()) {
+  if (filtered.length === 0 && searchFilter && searchFilter.trim()) {
     return (
       <p className="px-3 pt-4 text-body-sm text-[var(--text-tertiary)]">
         No conversations match "{searchFilter}"
@@ -36,7 +37,7 @@ export default function ConversationList({ searchFilter }: Props) {
     );
   }
 
-  if (conversations.length === 0) {
+  if (convList.length === 0) {
     return (
       <p className="px-3 pt-4 text-body-sm text-[var(--text-tertiary)]">
         No conversations yet

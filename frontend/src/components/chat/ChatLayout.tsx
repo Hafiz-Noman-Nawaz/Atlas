@@ -5,9 +5,10 @@ import MessageComposer from './MessageComposer';
 import EmptyState from './EmptyState';
 
 export default function ChatLayout() {
-  const { messages, activeConversationId, isLoadingMessages } = useChatStore();
+  const { messages = [], activeConversationId, isLoadingMessages } = useChatStore();
+  const msgList = Array.isArray(messages) ? messages : [];
 
-  const showEmptyState = !activeConversationId && messages.length === 0 && !isLoadingMessages;
+  const showEmptyState = !activeConversationId && msgList.length === 0 && !isLoadingMessages;
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">

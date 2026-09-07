@@ -6,7 +6,8 @@ import MarkdownRenderer from './MarkdownRenderer';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function MessageList() {
-  const { messages, isLoadingMessages, isSending, streamingContent, error, clearError, sendMessage } = useChatStore();
+  const { messages = [], isLoadingMessages, isSending, streamingContent, error, clearError, sendMessage } = useChatStore();
+  const msgList = Array.isArray(messages) ? messages : [];
   const bottomRef = useRef<HTMLDivElement>(null);
   const lastMessageContent = useRef<string>('');
 
@@ -57,7 +58,7 @@ export default function MessageList() {
 
   // Auto-scroll on new messages or streaming chunks
   useEffect(() => {
-    const lastMsg = messages[messages.length - 1];
+    const lastMsg = msgList.length > 0 ? msgList[msgList.length - 1] : null;
     if (lastMsg && lastMsg.content !== lastMessageContent.current) {
       lastMessageContent.current = lastMsg.content;
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -92,8 +93,8 @@ export default function MessageList() {
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="mx-auto max-w-3xl py-4 space-y-1">
-        {messages.map((msg, i) => (
-          <MessageBubble key={msg.id} message={msg} index={i} />
+        {msgList.map((msg, i) => (
+          <MessageBubble key={msg.id || i} message={msg} index={i} />
         ))}
 
         {/* Live Smooth Streaming Message Bubble */}
@@ -123,7 +124,7 @@ export default function MessageList() {
               <button
                 onClick={() => {
                   clearError();
-                  const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
+                  const lastUserMsg = [...msgList].reverse().find((m) => m.role === 'user');
                   if (lastUserMsg) {
                     sendMessage(lastUserMsg.content);
                   }

@@ -68,7 +68,8 @@ export default function SettingsPanel() {
   const updateUser = useAuthStore((s) => s.updateUser);
   const deleteAccount = useAuthStore((s) => s.deleteAccount);
 
-  const conversations = useChatStore((s) => s.conversations);
+  const rawConversations = useChatStore((s) => s.conversations);
+  const conversations = Array.isArray(rawConversations) ? rawConversations : [];
   const deleteAllConversations = useChatStore((s) => s.deleteAllConversations);
 
   const [activeTab, setActiveTab] = useState<Tab>('profile');
