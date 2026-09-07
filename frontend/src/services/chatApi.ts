@@ -1,4 +1,4 @@
-import api, { getAuthToken } from './api';
+import api, { getAuthToken, API_BASE_URL } from './api';
 import type { Attachment, ChatRequest, ChatResponse, FeedbackCreate, FeedbackResponse, Message } from '../types';
 
 export const chatApi = {
@@ -16,7 +16,7 @@ export const chatApi = {
   ): Promise<void> => {
     try {
       const token = await getAuthToken();
-      const response = await fetch(`${api.defaults.baseURL || 'http://localhost:8000/api'}/chat/stream`, {
+      const response = await fetch(`${API_BASE_URL}/chat/stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

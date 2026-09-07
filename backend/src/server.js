@@ -66,6 +66,7 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+app.options('*', cors());
 
 // Body Parser Middleware
 app.use(express.json({ limit: '20mb' }));
