@@ -1,4 +1,4 @@
-import { Plus, Search, Settings, LogOut, PanelLeftClose, Layers, Calculator, PhoneCall, ExternalLink, ShieldCheck } from 'lucide-react';
+import { Plus, Search, Settings, LogOut, PanelLeftClose, Layers, Calculator, PhoneCall, ExternalLink, ShieldCheck, Sun, Moon } from 'lucide-react';
 import { useState } from 'react';
 import { useUser, UserButton } from '@clerk/clerk-react';
 import { useAuthStore } from '../../stores/authStore';
@@ -92,7 +92,7 @@ function LocalUserProfile() {
 
 export default function Sidebar() {
   const { createConversation } = useChatStore();
-  const { setSidebarOpen, setSettingsOpen } = useUiStore();
+  const { setSidebarOpen, setSettingsOpen, theme, toggleTheme } = useUiStore();
   const [search, setSearch] = useState('');
   const [productsModalOpen, setProductsModalOpen] = useState(false);
   const [qualModalOpen, setQualModalOpen] = useState(false);
@@ -203,14 +203,29 @@ export default function Sidebar() {
         {/* User Profile */}
         {CLERK_PUBLISHABLE_KEY ? <ClerkUserProfile /> : <LocalUserProfile />}
 
-        {/* Settings button */}
-        <button
-          onClick={() => setSettingsOpen(true)}
-          className="focus-ring flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-colors"
-        >
-          <Settings size={14} />
-          <span>Advisor Preferences & Settings</span>
-        </button>
+        {/* Settings & Quick Theme Toggle */}
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="focus-ring flex flex-1 items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-colors min-w-0"
+          >
+            <Settings size={14} className="flex-shrink-0" />
+            <span className="truncate">Advisor Settings</span>
+          </button>
+
+          <button
+            onClick={toggleTheme}
+            className="flex-shrink-0 p-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors shadow-2xs"
+            aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {theme === 'dark' ? (
+              <Sun size={14} className="text-amber-400" />
+            ) : (
+              <Moon size={14} className="text-slate-600" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Modals */}

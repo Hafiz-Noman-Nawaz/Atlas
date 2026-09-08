@@ -48,6 +48,7 @@ interface UiState {
   setSendOnEnter: (send: boolean) => void;
   setAiCreativity: (creativity: Creativity) => void;
   setFontSize: (size: FontSize) => void;
+  toggleTheme: () => void;
   initializeTheme: () => void;
 }
 
@@ -61,8 +62,8 @@ function applyTheme(theme: Theme) {
 }
 
 export const useUiStore = create<UiState>((set, get) => ({
-  sidebarOpen: true,
-  theme: (localStorage.getItem('atlas_theme') as Theme) || 'system',
+  sidebarOpen: typeof window !== 'undefined' ? window.innerWidth >= 768 : true,
+  theme: (localStorage.getItem('atlas_theme') as Theme) || 'light',
   settingsOpen: false,
   deleteDialogId: null,
   renameDialogId: null,
@@ -90,6 +91,13 @@ export const useUiStore = create<UiState>((set, get) => ({
     localStorage.setItem('atlas_theme', theme);
     applyTheme(theme);
     set({ theme });
+  },
+
+  toggleTheme: () => {
+    const current = get().theme;
+    const resolved = current === 'system' ? getSystemTheme() : current;
+    const next: Theme = resolved === 'dark' ? 'light' : 'dark';
+    get().setTheme(next);
   },
 
   setSettingsOpen: (open) => set({ settingsOpen: open }),

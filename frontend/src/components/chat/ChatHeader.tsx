@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { PanelLeft, Menu, Pencil, Trash2, Download, FileText, FileCode, ChevronDown, Share2, Phone, ExternalLink, Calculator } from 'lucide-react';
+import { PanelLeft, Menu, Pencil, Trash2, Download, FileText, FileCode, ChevronDown, Share2, Phone, ExternalLink, Calculator, Sun, Moon } from 'lucide-react';
 import { useChatStore } from '../../stores/chatStore';
 import { useUiStore } from '../../stores/uiStore';
 import ShieldLogo from '../common/ShieldLogo';
@@ -12,7 +12,7 @@ export default function ChatHeader() {
   const conversations = Array.isArray(rawConversations) ? rawConversations : [];
   const rawMessages = useChatStore((s) => s.messages);
   const messages = Array.isArray(rawMessages) ? rawMessages : [];
-  const { sidebarOpen, setSidebarOpen, toggleSidebar, setRenameDialogId, setDeleteDialogId, setShareDialogOpen } = useUiStore();
+  const { sidebarOpen, setSidebarOpen, toggleSidebar, setRenameDialogId, setDeleteDialogId, setShareDialogOpen, theme, toggleTheme } = useUiStore();
 
   const [exportOpen, setExportOpen] = useState(false);
   const [calcOpen, setCalcOpen] = useState(false);
@@ -122,17 +122,17 @@ export default function ChatHeader() {
           <Menu size={18} />
         </button>
 
-        <div className="flex items-center gap-2.5 min-w-0">
-          {!sidebarOpen && <ShieldLogo size="sm" showSubtitle={false} className="hidden sm:flex" />}
-          <div className="min-w-0">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          {!sidebarOpen && <ShieldLogo size="sm" showSubtitle={false} className="hidden sm:flex flex-shrink-0" />}
+          <div className="min-w-0 flex-1">
             {activeConversation ? (
-              <h2 className="truncate text-xs sm:text-sm font-bold text-[var(--text-primary)]">
+              <h2 className="truncate text-xs sm:text-sm font-bold text-[var(--text-primary)] max-w-[140px] xs:max-w-[200px] sm:max-w-[280px] md:max-w-md">
                 {activeConversation.title}
               </h2>
             ) : (
-              <div className="flex items-center gap-2">
-                <h2 className="text-xs sm:text-sm font-bold text-[var(--text-primary)]">Shield Funding AI Assistant</h2>
-                <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-semibold text-[#06C18C] bg-[#1BD582]/15 px-2 py-0.5 rounded-full">
+              <div className="flex items-center gap-2 min-w-0">
+                <h2 className="text-xs sm:text-sm font-bold text-[var(--text-primary)] truncate">Shield Funding AI Assistant</h2>
+                <span className="hidden md:inline-flex items-center gap-1 text-[10px] font-semibold text-[#06C18C] bg-[#1BD582]/15 px-2 py-0.5 rounded-full flex-shrink-0">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#1BD582] animate-pulse" /> Advisor Online
                 </span>
               </div>
@@ -142,11 +142,11 @@ export default function ChatHeader() {
       </div>
 
       {/* Right Header CTAs */}
-      <div className="flex items-center gap-1.5 sm:gap-2">
-        {/* Phone Hotline CTA */}
+      <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
+        {/* Phone Hotline CTA (Desktop) */}
         <a
           href="tel:8888826117"
-          className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover)] text-xs font-semibold text-[var(--text-primary)] transition-colors"
+          className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover)] text-xs font-semibold text-[var(--text-primary)] transition-colors"
           title="Direct Toll-Free Phone"
         >
           <Phone size={13} className="text-[#06C18C]" />
@@ -156,11 +156,25 @@ export default function ChatHeader() {
         {/* In-Chat Funding Calculator Trigger */}
         <button
           onClick={() => setCalcOpen(true)}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[#2B7A9D]/40 bg-[#2B7A9D]/10 hover:bg-[#2B7A9D]/20 text-xs font-semibold text-[var(--text-primary)] transition-all shadow-2xs"
+          className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg border border-[#2B7A9D]/40 bg-[#2B7A9D]/10 hover:bg-[#2B7A9D]/20 text-xs font-semibold text-[var(--text-primary)] transition-all shadow-2xs"
           title="Open Business Loan & Advance Calculator"
         >
           <Calculator size={13} className="text-[#2B7A9D] dark:text-[#38bdf8]" />
           <span className="hidden sm:inline">Calculator</span>
+        </button>
+
+        {/* Theme Toggle Button (Light / Dark) */}
+        <button
+          onClick={toggleTheme}
+          className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all shadow-2xs"
+          aria-label={theme === 'dark' ? 'Switch to Light mode' : 'Switch to Dark mode'}
+          title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+        >
+          {theme === 'dark' ? (
+            <Sun size={15} className="text-amber-400 transition-transform hover:rotate-45" />
+          ) : (
+            <Moon size={15} className="text-slate-700 transition-transform hover:-rotate-12" />
+          )}
         </button>
 
         {/* Official Application Button */}
@@ -168,9 +182,9 @@ export default function ChatHeader() {
           href="https://shieldfunding.com/apply/"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#1BD582] hover:bg-[#15b86f] text-[#023047] text-xs font-bold transition-all shadow-2xs"
+          className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-lg bg-[#1BD582] hover:bg-[#15b86f] text-[#023047] text-xs font-bold transition-all shadow-2xs"
         >
-          <span>Apply Now</span>
+          <span>Apply</span>
           <ExternalLink size={12} />
         </a>
 

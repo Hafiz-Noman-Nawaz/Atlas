@@ -72,7 +72,7 @@ export default function FollowUpChips({ latestAssistantMessage = '', onOpenCalcu
               sendMessage(chip.label);
             }
           }}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-primary)] hover:border-[#2B7A9D] hover:bg-[#2B7A9D]/10 hover:text-[#2B7A9D] dark:hover:text-[#38bdf8] transition-all shadow-2xs group"
+          className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-medium bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-primary)] hover:border-[#2B7A9D] hover:bg-[#2B7A9D]/10 hover:text-[#2B7A9D] dark:hover:text-[#38bdf8] transition-all shadow-2xs group text-left"
         >
           {chip.action === 'calculator' ? (
             <Calculator size={12} className="text-emerald-500" />
