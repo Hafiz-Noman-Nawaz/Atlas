@@ -109,3 +109,100 @@ Please answer the user question using the knowledge context above following your
     ragApplied: true,
   };
 }
+
+/**
+ * Generate streaming AI response using Google Gemini + RAG
+ * @param {string} userMessage
+ * @param {Array} conversationHistory
+ * @param {Function} onToken Callback called with each text token
+ * @returns {Promise<{content: string, model: string, sources: Array, ragApplied: boolean}>}
+ */
+export async function generateRAGResponseStream(userMessage, conversationHistory = [], onToken = () => {}) {
+  const relevantChunks = await ragService.retrieveRelevantContext(userMessage, 4);
+
+  let contextText = '';
+  if (relevantChunks.length > 0) {
+    contextText = relevantChunks
+      .map((c, i) => `[Source ${i + 1}: ${c.title || c.source}]\n${c.content}`)
+      .join('\n\n---\n\n');
+  }
+
+  const client = getAIClient();
+  let fullContent = '';
+  const modelToUse = config.geminiModel || 'gemini-2.5-flash';
+
+  if (client) {
+    try {
+      const historyTurns = conversationHistory.slice(-6).map((m) => ({
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: m.content }],
+      }));
+
+      const promptContent = `### RELEVANT SHIELD FUNDING KNOWLEDGE CONTEXT:
+${contextText || 'No direct matches found in knowledge base.'}
+
+### USER QUESTION:
+${userMessage}
+
+Please answer the user question using the knowledge context above following your system instructions.`;
+
+      console.log(`[GeminiService] Streaming response using model: ${modelToUse}...`);
+
+      const stream = await client.models.generateContentStream({
+        model: modelToUse,
+        contents: [
+          ...historyTurns,
+          {
+            role: 'user',
+            parts: [{ text: promptContent }],
+          },
+        ],
+        config: {
+          systemInstruction: SYSTEM_INSTRUCTION,
+          temperature: 0.2,
+          maxOutputTokens: 1024,
+        },
+      });
+
+      for await (const chunk of stream) {
+        const text = chunk.text;
+        if (text) {
+          fullContent += text;
+          onToken(text);
+        }
+      }
+
+      if (fullContent.trim()) {
+        return {
+          content: fullContent.trim(),
+          model: modelToUse,
+          sources: relevantChunks.map((c) => ({ title: c.title, source: c.source, score: c.score })),
+          ragApplied: true,
+        };
+      }
+    } catch (err) {
+      console.warn(`[GeminiService] Gemini streaming error, falling back to local synthesizer:`, err.message);
+    }
+  }
+
+  // Fallback: Local knowledge synthesis with simulated natural token streaming
+  const fallbackText =
+    relevantChunks.length > 0 && relevantChunks[0].score > 0.3
+      ? relevantChunks[0].content
+      : 'I do not have that specific answer in my current knowledgebase, but our team can help through the contact page at https://shieldfunding.com/contact/ or by calling (888) 882-6117.';
+
+  const words = fallbackText.split(' ');
+  for (let i = 0; i < words.length; i++) {
+    const token = (i === 0 ? '' : ' ') + words[i];
+    fullContent += token;
+    onToken(token);
+    await new Promise((r) => setTimeout(r, 20));
+  }
+
+  return {
+    content: fullContent.trim(),
+    model: client ? 'rag-fallback-stream' : 'rag-direct-synthesizer',
+    sources: relevantChunks.slice(0, 2).map((c) => ({ title: c.title, source: c.source, score: c.score })),
+    ragApplied: true,
+  };
+}

@@ -573,10 +573,14 @@ export const shieldMockService = {
         onStart(convId, userMessage);
       }
 
-      // 3. Obtain Response (Try Live Backend with Gemini 3.6 Flash + RAG, fallback to local knowledge base)
+      // 3. Real-Time Token Streaming from live Gemini 3.6 Flash SSE endpoint
+      const apiBase = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5000' : '');
       let fullResponseText = '';
+      let streamedDirectlyFromBackend = false;
+
       try {
-        const backendRes = await fetch('http://localhost:5000/api/chat', {
+        const streamEndpoint = `${apiBase}/api/chat/stream`;
+        const response = await fetch(streamEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -587,30 +591,55 @@ export const shieldMockService = {
             })),
           }),
         });
-        if (backendRes.ok) {
-          const resJson = await backendRes.json();
-          if (resJson && resJson.data && resJson.data.reply) {
-            fullResponseText = resJson.data.reply;
+
+        if (response.ok && response.body) {
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (trimmed.startsWith('data: ')) {
+                try {
+                  const payload = JSON.parse(trimmed.slice(6));
+                  if (payload.type === 'chunk' && payload.text) {
+                    fullResponseText += payload.text;
+                    onChunk(payload.text);
+                    streamedDirectlyFromBackend = true;
+                  } else if (payload.type === 'done' && payload.reply && !fullResponseText) {
+                    fullResponseText = payload.reply;
+                  }
+                } catch {
+                  // Ignore JSON parse error on incomplete chunks
+                }
+              }
+            }
           }
         }
-      } catch {
-        // Backend offline or unreachable, smoothly fallback
+      } catch (streamErr) {
+        console.warn('[Shield Service] Backend SSE stream unreachable, utilizing local RAG engine:', streamErr);
       }
 
-      if (!fullResponseText) {
-        fullResponseText = generateShieldResponse(data.message);
-      }
+      // 4. Fallback: If backend stream was not available, synthesize and stream locally
+      if (!streamedDirectlyFromBackend) {
+        if (!fullResponseText) {
+          fullResponseText = generateShieldResponse(data.message);
+        }
 
-      // 4. Token-by-token streaming simulation (smooth, natural cadence)
-      const words = fullResponseText.split(' ');
-      let streamedText = '';
-
-      for (let i = 0; i < words.length; i++) {
-        const token = (i === 0 ? '' : ' ') + words[i];
-        streamedText += token;
-        onChunk(token);
-        // Realistic micro-delay between tokens
-        await new Promise((resolve) => setTimeout(resolve, 15 + Math.random() * 20));
+        const words = fullResponseText.split(' ');
+        for (let i = 0; i < words.length; i++) {
+          const token = (i === 0 ? '' : ' ') + words[i];
+          onChunk(token);
+          await new Promise((resolve) => setTimeout(resolve, 15 + Math.random() * 18));
+        }
       }
 
       // 5. Build Assistant Message

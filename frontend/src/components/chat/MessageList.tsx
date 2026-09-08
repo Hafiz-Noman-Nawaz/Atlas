@@ -4,6 +4,8 @@ import MessageBubble from './MessageBubble';
 import TypingIndicator from './TypingIndicator';
 import MarkdownRenderer from './MarkdownRenderer';
 import ShieldLogo from '../common/ShieldLogo';
+import FollowUpChips from './FollowUpChips';
+import FundingCalculatorModal from '../modals/FundingCalculatorModal';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function MessageList() {
@@ -11,6 +13,7 @@ export default function MessageList() {
   const msgList = Array.isArray(messages) ? messages : [];
   const bottomRef = useRef<HTMLDivElement>(null);
   const lastMessageContent = useRef<string>('');
+  const [calculatorOpen, setCalculatorOpen] = useState(false);
 
   // Smooth Token Interpolator State
   const [displayedStreamingText, setDisplayedStreamingText] = useState('');
@@ -139,8 +142,26 @@ export default function MessageList() {
           </div>
         )}
 
+        {/* Proactive Contextual Follow-Up Chips */}
+        {!isSending && !displayedStreamingText && msgList.length > 0 && (
+          <div className="px-4 sm:px-6 pl-12 sm:pl-14">
+            <FollowUpChips
+              latestAssistantMessage={
+                [...msgList].reverse().find((m) => m.role === 'assistant')?.content || ''
+              }
+              onOpenCalculator={() => setCalculatorOpen(true)}
+            />
+          </div>
+        )}
+
         <div ref={bottomRef} />
       </div>
+
+      {/* Funding Calculator Modal */}
+      <FundingCalculatorModal
+        isOpen={calculatorOpen}
+        onClose={() => setCalculatorOpen(false)}
+      />
     </div>
   );
 }

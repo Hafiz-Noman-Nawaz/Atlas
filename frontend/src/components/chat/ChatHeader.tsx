@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { PanelLeft, Menu, Pencil, Trash2, Download, FileText, FileCode, ChevronDown, Share2, Phone, ExternalLink } from 'lucide-react';
+import { PanelLeft, Menu, Pencil, Trash2, Download, FileText, FileCode, ChevronDown, Share2, Phone, ExternalLink, Calculator } from 'lucide-react';
 import { useChatStore } from '../../stores/chatStore';
 import { useUiStore } from '../../stores/uiStore';
 import ShieldLogo from '../common/ShieldLogo';
+import FundingCalculatorModal from '../modals/FundingCalculatorModal';
 import toast from 'react-hot-toast';
 
 export default function ChatHeader() {
@@ -14,6 +15,7 @@ export default function ChatHeader() {
   const { sidebarOpen, setSidebarOpen, toggleSidebar, setRenameDialogId, setDeleteDialogId, setShareDialogOpen } = useUiStore();
 
   const [exportOpen, setExportOpen] = useState(false);
+  const [calcOpen, setCalcOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const activeConversation = conversations.find((c) => c.id === activeConversationId);
@@ -151,6 +153,16 @@ export default function ChatHeader() {
           <span>(888) 882-6117</span>
         </a>
 
+        {/* In-Chat Funding Calculator Trigger */}
+        <button
+          onClick={() => setCalcOpen(true)}
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[#2B7A9D]/40 bg-[#2B7A9D]/10 hover:bg-[#2B7A9D]/20 text-xs font-semibold text-[var(--text-primary)] transition-all shadow-2xs"
+          title="Open Business Loan & Advance Calculator"
+        >
+          <Calculator size={13} className="text-[#2B7A9D] dark:text-[#38bdf8]" />
+          <span className="hidden sm:inline">Calculator</span>
+        </button>
+
         {/* Official Application Button */}
         <a
           href="https://shieldfunding.com/apply/"
@@ -225,6 +237,8 @@ export default function ChatHeader() {
           </div>
         )}
       </div>
+      {/* Funding Calculator Modal */}
+      <FundingCalculatorModal isOpen={calcOpen} onClose={() => setCalcOpen(false)} />
     </header>
   );
 }

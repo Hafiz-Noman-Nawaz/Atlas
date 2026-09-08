@@ -25,7 +25,7 @@ router.get('/health', (_req, res) => {
   );
 });
 
-import { generateRAGResponse } from '../services/llm/geminiService.js';
+import { generateRAGResponse, generateRAGResponseStream } from '../services/llm/geminiService.js';
 import { errorResponse } from '../utils/apiResponse.js';
 
 // Mount module routes
@@ -58,6 +58,46 @@ router.post('/chat', async (req, res, next) => {
     );
   } catch (err) {
     next(err);
+  }
+});
+
+/**
+ * Public Streaming AI Chat Endpoint (SSE: Server-Sent Events)
+ * POST /api/chat/stream
+ */
+router.post('/chat/stream', async (req, res, next) => {
+  try {
+    const { message, history } = req.body;
+    if (!message || !message.trim()) {
+      return res.status(400).json({ success: false, error: 'Message is required' });
+    }
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders?.();
+
+    const result = await generateRAGResponseStream(message, history || [], (token) => {
+      res.write(`data: ${JSON.stringify({ type: 'chunk', text: token })}\n\n`);
+    });
+
+    res.write(
+      `data: ${JSON.stringify({
+        type: 'done',
+        reply: result.content,
+        model: result.model,
+        sources: result.sources,
+        ragApplied: result.ragApplied,
+      })}\n\n`
+    );
+    res.end();
+  } catch (err) {
+    if (!res.headersSent) {
+      next(err);
+    } else {
+      res.write(`data: ${JSON.stringify({ type: 'error', message: err.message })}\n\n`);
+      res.end();
+    }
   }
 });
 

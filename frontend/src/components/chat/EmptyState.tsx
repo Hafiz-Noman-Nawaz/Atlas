@@ -18,6 +18,7 @@ import ShieldLogo from '../common/ShieldLogo';
 import FundingProductsModal from '../modals/FundingProductsModal';
 import QualificationModal from '../modals/QualificationModal';
 import ContactAdvisorModal from '../modals/ContactAdvisorModal';
+import FundingCalculatorModal from '../modals/FundingCalculatorModal';
 
 const fundingCategories = [
   {
@@ -76,6 +77,7 @@ export default function EmptyState() {
   const [productsModalOpen, setProductsModalOpen] = useState(false);
   const [qualModalOpen, setQualModalOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [calcModalOpen, setCalcModalOpen] = useState(false);
 
   return (
     <div className="flex flex-1 flex-col items-center justify-start px-3 py-6 sm:px-6 sm:py-8 overflow-y-auto max-w-4xl mx-auto w-full">
@@ -114,53 +116,69 @@ export default function EmptyState() {
       </div>
 
       {/* Interactive Quick Tools Action Bar */}
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2.5 w-full">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 w-full">
         <button
           onClick={() => setQualModalOpen(true)}
           className="flex items-center justify-between p-3 rounded-xl border border-[#1BD582]/40 bg-gradient-to-r from-emerald-500/10 to-teal-500/5 hover:bg-emerald-500/15 transition-all text-left group shadow-xs"
         >
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-[#1BD582] text-[#023047] font-bold">
-              <Calculator size={16} />
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 rounded-lg bg-[#1BD582] text-[#023047] font-bold flex-shrink-0">
+              <ShieldCheck size={16} />
             </div>
-            <div>
-              <p className="text-xs font-bold text-[var(--text-primary)]">Check Eligibility</p>
-              <p className="text-[10px] text-[var(--text-secondary)]">Instant pre-qualification check</p>
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-[var(--text-primary)] truncate">Check Eligibility</p>
+              <p className="text-[10px] text-[var(--text-secondary)] truncate">Instant pre-qualification</p>
             </div>
           </div>
-          <ArrowRight size={14} className="text-[#06C18C] group-hover:translate-x-0.5 transition-transform" />
+          <ArrowRight size={14} className="text-[#06C18C] group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+        </button>
+
+        <button
+          onClick={() => setCalcModalOpen(true)}
+          className="flex items-center justify-between p-3 rounded-xl border border-[#2B7A9D]/40 bg-[#2B7A9D]/10 hover:bg-[#2B7A9D]/15 transition-all text-left group shadow-xs"
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 rounded-lg bg-[#2B7A9D] text-white flex-shrink-0">
+              <Calculator size={16} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-[var(--text-primary)] truncate">Loan Calculator</p>
+              <p className="text-[10px] text-[var(--text-secondary)] truncate">Estimate payments & rates</p>
+            </div>
+          </div>
+          <ArrowRight size={14} className="text-[#2B7A9D] dark:text-[#38bdf8] group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
         </button>
 
         <button
           onClick={() => setProductsModalOpen(true)}
           className="flex items-center justify-between p-3 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover)] transition-all text-left group shadow-xs"
         >
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-[#023047] text-white">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 rounded-lg bg-[#023047] text-white flex-shrink-0">
               <Layers size={16} />
             </div>
-            <div>
-              <p className="text-xs font-bold text-[var(--text-primary)]">Products Catalog</p>
-              <p className="text-[10px] text-[var(--text-secondary)]">Compare all 6 loan programs</p>
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-[var(--text-primary)] truncate">Products Catalog</p>
+              <p className="text-[10px] text-[var(--text-secondary)] truncate">Compare all 6 programs</p>
             </div>
           </div>
-          <ArrowRight size={14} className="text-[var(--text-tertiary)] group-hover:translate-x-0.5 transition-transform" />
+          <ArrowRight size={14} className="text-[var(--text-tertiary)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
         </button>
 
         <button
           onClick={() => setContactModalOpen(true)}
           className="flex items-center justify-between p-3 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover)] transition-all text-left group shadow-xs"
         >
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-[#137499] text-white">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 rounded-lg bg-[#137499] text-white flex-shrink-0">
               <PhoneCall size={16} />
             </div>
-            <div>
-              <p className="text-xs font-bold text-[var(--text-primary)]">Speak to Advisor</p>
-              <p className="text-[10px] text-[var(--text-secondary)]">(888) 882-6117 Toll-Free</p>
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-[var(--text-primary)] truncate">Speak to Advisor</p>
+              <p className="text-[10px] text-[var(--text-secondary)] truncate">(888) 882-6117 Toll-Free</p>
             </div>
           </div>
-          <ArrowRight size={14} className="text-[var(--text-tertiary)] group-hover:translate-x-0.5 transition-transform" />
+          <ArrowRight size={14} className="text-[var(--text-tertiary)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
         </button>
       </div>
 
@@ -227,6 +245,7 @@ export default function EmptyState() {
       <FundingProductsModal isOpen={productsModalOpen} onClose={() => setProductsModalOpen(false)} />
       <QualificationModal isOpen={qualModalOpen} onClose={() => setQualModalOpen(false)} />
       <ContactAdvisorModal isOpen={contactModalOpen} onClose={() => setContactModalOpen(false)} />
+      <FundingCalculatorModal isOpen={calcModalOpen} onClose={() => setCalcModalOpen(false)} />
     </div>
   );
 }
