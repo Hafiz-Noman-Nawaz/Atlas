@@ -31,6 +31,11 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Only process valid http/https requests, ignore chrome-extension:// and unsupported schemes
+  if (!event.request.url.startsWith('http://') && !event.request.url.startsWith('https://')) {
+    return;
+  }
+
   // Always fetch HTML navigation and API calls from network directly
   if (
     event.request.mode === 'navigate' ||
@@ -48,7 +53,7 @@ self.addEventListener('fetch', (event) => {
         if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
+            cache.put(event.request, responseToCache).catch(() => {});
           });
         }
         return networkResponse;
