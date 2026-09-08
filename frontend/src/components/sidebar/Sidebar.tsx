@@ -1,4 +1,4 @@
-import { Plus, Search, Settings, LogOut, PanelLeftClose, Layers, Calculator, PhoneCall, ExternalLink, ShieldCheck, Sun, Moon } from 'lucide-react';
+import { Plus, Search, Settings, LogOut, PanelLeftClose, Layers, Calculator, PhoneCall, ExternalLink, ShieldCheck, Sun, Moon, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useUser, UserButton } from '@clerk/clerk-react';
 import { useAuthStore } from '../../stores/authStore';
@@ -203,14 +203,23 @@ export default function Sidebar() {
         {/* User Profile */}
         {CLERK_PUBLISHABLE_KEY ? <ClerkUserProfile /> : <LocalUserProfile />}
 
-        {/* Settings & Quick Theme Toggle */}
+        {/* Settings, Tour & Quick Theme Toggle */}
         <div className="flex items-center gap-1.5">
           <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open-onboarding-tour'))}
+            className="focus-ring flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[#06C18C] transition-colors flex-shrink-0"
+            title="Interactive Feature Tour"
+          >
+            <Sparkles size={14} className="text-[#1BD582]" />
+            <span className="truncate">Tour</span>
+          </button>
+
+          <button
             onClick={() => setSettingsOpen(true)}
-            className="focus-ring flex flex-1 items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-colors min-w-0"
+            className="focus-ring flex flex-1 items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-colors min-w-0"
           >
             <Settings size={14} className="flex-shrink-0" />
-            <span className="truncate">Advisor Settings</span>
+            <span className="truncate">Settings</span>
           </button>
 
           <button

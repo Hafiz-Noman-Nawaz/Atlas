@@ -11,6 +11,7 @@ import RenameDialog from '../sidebar/RenameDialog';
 const SettingsPanel = lazy(() => import('../settings/SettingsPanel'));
 const CanvasPanel = lazy(() => import('../canvas/CanvasPanel'));
 const ShareDialog = lazy(() => import('../chat/ShareDialog'));
+const OnboardingTourModal = lazy(() => import('../modals/OnboardingTourModal'));
 
 export default function AppLayout() {
   const fetchConversations = useChatStore((s) => s.fetchConversations);
@@ -69,6 +70,7 @@ export default function AppLayout() {
         <SettingsPanel />
         <CanvasPanel />
         <ShareDialog />
+        <OnboardingTourModal />
       </Suspense>
 
       {/* Lightweight dialogs */}

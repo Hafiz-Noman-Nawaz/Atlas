@@ -62,6 +62,18 @@ export default function MessageComposer() {
     }
   }, [resize]);
 
+  // Listen for external focus requests (e.g., from EmptyState banner or quick prompt button)
+  useEffect(() => {
+    const handleFocusRequest = () => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        textareaRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    };
+    window.addEventListener('focus-chat-input', handleFocusRequest);
+    return () => window.removeEventListener('focus-chat-input', handleFocusRequest);
+  }, [textareaRef]);
+
   const toggleListening = () => {
     if (!recognitionRef.current) {
       toast.error('Voice dictation is not supported in this browser.');

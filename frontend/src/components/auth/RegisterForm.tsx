@@ -55,6 +55,8 @@ export default function RegisterForm() {
       const res = await authApi.register({ name, email, password });
       setToken(res.access_token);
       await fetchUser();
+      // Ensure new accounts always get the onboarding walkthrough tour
+      localStorage.removeItem('shield_funding_tour_completed');
       navigate('/');
     } catch (err: unknown) {
       const msg =

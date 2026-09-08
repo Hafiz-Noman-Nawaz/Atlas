@@ -113,6 +113,27 @@ export default function EmptyState() {
             🔒 <strong>Bank-Grade</strong> 256-Bit Security
           </span>
         </div>
+
+        {/* Quick Indicator & Feature Tour Trigger */}
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('focus-chat-input'))}
+            className="group flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1BD582]/15 hover:bg-[#1BD582]/25 border border-[#1BD582]/40 text-[#023047] dark:text-[#1BD582] text-xs font-bold transition-all shadow-2xs cursor-pointer active:scale-95"
+            title="Focus the bottom sticky chatbox to begin asking questions"
+          >
+            <span className="inline-block w-2 h-2 rounded-full bg-[#1BD582] animate-ping" />
+            <span>💬 Type below to chat with Assistant</span>
+            <span className="group-hover:translate-y-0.5 transition-transform text-[#06C18C]">↓</span>
+          </button>
+
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open-onboarding-tour'))}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-semibold transition-all shadow-2xs cursor-pointer"
+          >
+            <Sparkles size={13} className="text-[#1BD582]" />
+            <span>Take 1-Min Tour</span>
+          </button>
+        </div>
       </div>
 
       {/* Interactive Quick Tools Action Bar */}
