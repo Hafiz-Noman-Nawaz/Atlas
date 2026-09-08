@@ -1,12 +1,24 @@
 {
-  "short_name": "ZeoAtlas",
-  "name": "ZeoAtlas AI — Intelligent Assistant",
-  "description": "High-intelligence conversational AI assistant specialized in software engineering and machine learning.",
+  "short_name": "Shield Funding",
+  "name": "Shield Funding AI Assistant",
+  "description": "Shield Funding AI Assistant — Business Loans, Merchant Cash Advances, and Working Capital Solutions.",
   "icons": [
+    {
+      "src": "/favicon-32x32.png",
+      "type": "image/png",
+      "sizes": "32x32",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
     {
       "src": "/favicon.png",
       "type": "image/png",
-      "sizes": "256x256",
+      "sizes": "512x512",
       "purpose": "any maskable"
     },
     {
@@ -17,8 +29,8 @@
     }
   ],
   "start_url": "/",
-  "background_color": "#090d16",
-  "theme_color": "#0ea5e9",
+  "background_color": "#0a111a",
+  "theme_color": "#2B7A9D",
   "display": "standalone",
   "orientation": "portrait-primary",
   "scope": "/"
