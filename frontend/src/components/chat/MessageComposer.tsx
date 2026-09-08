@@ -206,7 +206,7 @@ export default function MessageComposer() {
 
   return (
     <div
-      className={`border-t border-[var(--border)] bg-[var(--bg-composer)] shadow-[0_-4px_14px_rgba(0,0,0,0.04)] px-2 pt-1.5 pb-0 sm:px-4 sm:pt-2.5 sm:pb-2.5 transition-colors ${
+      className={`border-t border-[var(--border)] bg-[var(--bg-composer)] shadow-[0_-4px_14px_rgba(0,0,0,0.04)] px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-4 sm:pt-2.5 sm:pb-3 transition-colors ${
         isDragging ? 'bg-accent/5' : ''
       }`}
       onDragOver={handleDragOver}
