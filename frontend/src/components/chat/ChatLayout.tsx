@@ -11,7 +11,7 @@ export default function ChatLayout() {
   const showEmptyState = !activeConversationId && msgList.length === 0 && !isLoadingMessages;
 
   return (
-    <div className="flex flex-1 flex-col h-full h-[100dvh] max-h-[100dvh] overflow-hidden bg-[var(--bg)]">
+    <div className="flex flex-1 flex-col h-full min-h-0 overflow-hidden bg-[var(--bg)]">
       {/* Top Navbar */}
       <div className="flex-shrink-0 z-10">
         <ChatHeader />
@@ -22,8 +22,8 @@ export default function ChatLayout() {
         {showEmptyState ? <EmptyState /> : <MessageList />}
       </div>
 
-      {/* Sticky Bottom Chatbox (Always pinned to the screen bottom) */}
-      <div className="flex-shrink-0 sticky bottom-0 z-20 w-full bg-[var(--bg-composer)] border-t border-[var(--border)] shadow-[0_-4px_16px_rgba(0,0,0,0.05)]">
+      {/* Bottom Chatbox (Anchored directly to the bottom border) */}
+      <div className="flex-shrink-0 w-full z-20">
         <MessageComposer />
       </div>
     </div>

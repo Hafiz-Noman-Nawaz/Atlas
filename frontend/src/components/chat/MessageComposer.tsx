@@ -206,7 +206,7 @@ export default function MessageComposer() {
 
   return (
     <div
-      className={`border-t border-[var(--border)] bg-[var(--bg-composer)] px-2.5 pt-2 pb-2.5 sm:px-4 sm:pt-3 sm:pb-3 transition-colors ${
+      className={`border-t border-[var(--border)] bg-[var(--bg-composer)] shadow-[0_-4px_14px_rgba(0,0,0,0.04)] px-2 pt-1.5 pb-0 sm:px-4 sm:pt-2.5 sm:pb-2.5 transition-colors ${
         isDragging ? 'bg-accent/5' : ''
       }`}
       onDragOver={handleDragOver}
@@ -215,7 +215,7 @@ export default function MessageComposer() {
     >
       <div className="mx-auto max-w-3xl">
         {/* Quick Action Prompt Chips + Live Web Search Toggle */}
-        <div className="mb-2 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
+        <div className="mb-1.5 sm:mb-2 flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none touch-pan-x">
           {/* Live Web Search Grounding Toggle */}
           <button
             type="button"
