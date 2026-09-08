@@ -3,6 +3,7 @@ import { useChatStore } from '../../stores/chatStore';
 import MessageBubble from './MessageBubble';
 import TypingIndicator from './TypingIndicator';
 import MarkdownRenderer from './MarkdownRenderer';
+import ShieldLogo from '../common/ShieldLogo';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function MessageList() {
@@ -100,13 +101,13 @@ export default function MessageList() {
         {/* Live Smooth Streaming Message Bubble */}
         {displayedStreamingText && (
           <div className="group flex gap-3 px-4 py-3 sm:px-6 justify-start animate-in fade-in slide-in-from-bottom-2 duration-200">
-            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-accent text-white shadow-xs mt-0.5 animate-pulse">
-              <span className="text-xs font-bold">Z</span>
+            <div className="flex-shrink-0 mt-0.5">
+              <ShieldLogo size="sm" variant="icon" showText={false} />
             </div>
-            <div className="max-w-[90%] sm:max-w-[80%] flex flex-col items-start">
-              <div className="rounded-2xl rounded-bl-md border border-[var(--border-light)] bg-[var(--bg-secondary)] px-4 py-3 text-[var(--text-primary)] shadow-sm">
+            <div className="max-w-[90%] sm:max-w-[82%] flex flex-col items-start">
+              <div className="rounded-2xl rounded-bl-xs border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-3 text-[var(--text-primary)] shadow-xs">
                 <MarkdownRenderer content={displayedStreamingText} />
-                <span className="inline-block h-3.5 w-1.5 animate-pulse rounded-sm bg-accent align-middle ml-1 shadow-[0_0_8px_rgba(20,184,166,0.6)]" />
+                <span className="inline-block h-3.5 w-1.5 animate-pulse rounded-xs bg-[#1BD582] align-middle ml-1" />
               </div>
             </div>
           </div>

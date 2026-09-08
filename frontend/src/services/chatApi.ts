@@ -1,10 +1,47 @@
-import api, { getAuthToken, API_BASE_URL } from './api';
 import type { Attachment, ChatRequest, ChatResponse, FeedbackCreate, FeedbackResponse, Message } from '../types';
+import { shieldMockService } from './shieldMockService';
 
+/**
+ * Chat API layer tailored for Shield Funding AI Assistant.
+ * Fully decoupled mock service ensuring 100% reliable standalone frontend prototype.
+ */
 export const chatApi = {
   sendMessage: async (data: ChatRequest): Promise<ChatResponse> => {
-    const res = await api.post<ChatResponse>('/chat', data);
-    return res.data;
+    let convId = data.conversation_id;
+    if (!convId) {
+      const newConv = await shieldMockService.createConversation('Business Funding Inquiry');
+      convId = newConv.id;
+    }
+
+    const userMessage: Message = {
+      id: `msg-${Date.now()}-user`,
+      conversation_id: convId,
+      role: 'user',
+      content: data.message,
+      attachments: data.attachments || [],
+      intent: 'funding_inquiry',
+      confidence: 0.98,
+      created_at: new Date().toISOString(),
+    };
+
+    const responseText = (shieldMockService as any).generateResponse ? (shieldMockService as any).generateResponse(data.message) : '';
+
+    const assistantMessage: Message = {
+      id: `msg-${Date.now()}-assistant`,
+      conversation_id: convId,
+      role: 'assistant',
+      content: responseText,
+      attachments: [],
+      intent: 'shield_advisory',
+      confidence: 0.99,
+      created_at: new Date().toISOString(),
+    };
+
+    return {
+      conversation_id: convId,
+      user_message: userMessage,
+      assistant_message: assistantMessage,
+    };
   },
 
   sendMessageStream: async (
@@ -14,102 +51,53 @@ export const chatApi = {
     onDone?: (conversationId: string, assistantMessage: Message) => void,
     onError?: (err: any) => void
   ): Promise<void> => {
-    try {
-      const token = await getAuthToken();
-      const response = await fetch(`${API_BASE_URL}/chat/stream`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}`);
-      }
-
-      if (!response.body) {
-        throw new Error('No response body for stream');
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder('utf-8');
-      let buffer = '';
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (trimmed.startsWith('data: ')) {
-            try {
-              const payload = JSON.parse(trimmed.slice(6));
-              if (payload.type === 'start' && onStart) {
-                onStart(payload.conversation_id, payload.user_message);
-              } else if (payload.type === 'chunk') {
-                onChunk(payload.text);
-              } else if (payload.type === 'done' && onDone) {
-                onDone(payload.conversation_id, payload.assistant_message);
-              } else if (payload.type === 'error' && onError) {
-                onError(new Error(payload.error));
-              }
-            } catch (err) {
-              console.warn('[SSE Parse Warning]', err);
-            }
-          }
-        }
-      }
-    } catch (error) {
-      if (onError) onError(error);
-      else throw error;
-    }
+    return shieldMockService.sendMessageStream(data, onChunk, onStart, onDone, onError);
   },
 
-  getMessages: async (conversationId: string, skip = 0, limit = 50): Promise<Message[]> => {
-    const res = await api.get<any>(`/conversations/${conversationId}/messages`, {
-      params: { skip, limit },
-    });
-    if (res.data && Array.isArray(res.data.messages)) {
-      return res.data.messages;
-    }
-    if (Array.isArray(res.data)) {
-      return res.data;
-    }
-    return [];
+  getMessages: async (conversationId: string, _skip = 0, _limit = 50): Promise<Message[]> => {
+    return shieldMockService.getMessages(conversationId);
   },
 
   uploadFiles: async (files: File[]): Promise<Attachment[]> => {
-    const formData = new FormData();
-    files.forEach((file) => {
-      formData.append('files', file);
-    });
-
-    const res = await api.post<{ success: boolean; files: Attachment[] }>('/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return res.data.files;
+    // Client-side mock document attachments
+    return files.map((file) => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      url: URL.createObjectURL(file),
+      extractedText: `[Attached Document: ${file.name} (${(file.size / 1024).toFixed(1)} KB)]`,
+    }));
   },
 
   submitFeedback: async (messageId: string, data: FeedbackCreate): Promise<FeedbackResponse> => {
-    const res = await api.post<FeedbackResponse>(`/messages/${messageId}/feedback`, data);
-    return res.data;
+    return {
+      id: `fb-${Date.now()}`,
+      message_id: messageId,
+      rating: data.rating,
+      comment: data.comment || null,
+      created_at: new Date().toISOString(),
+    };
   },
 
-  createShareLink: async (conversationId: string): Promise<{ share_id: string; share_url: string; title: string }> => {
-    const res = await api.post<{ share_id: string; share_url: string; title: string }>(`/chat/${conversationId}/share`);
-    return res.data;
+  createShareLink: async (_conversationId: string): Promise<{ share_id: string; share_url: string; title: string }> => {
+    const shareId = `shield-share-${Date.now()}`;
+    return {
+      share_id: shareId,
+      share_url: `${window.location.origin}/share/${shareId}`,
+      title: 'Shield Funding AI Consultation',
+    };
   },
 
-  getSharedChat: async (shareId: string): Promise<any> => {
-    const res = await api.get<any>(`/chat/public/share/${shareId}`);
-    return res.data;
+  getSharedChat: async (_shareId: string): Promise<any> => {
+    const convs = await shieldMockService.getConversations();
+    const first = convs.items[0];
+    const msgs = first ? await shieldMockService.getMessages(first.id) : [];
+    return {
+      share_id: _shareId,
+      title: first ? first.title : 'Shield Funding Consultation',
+      messages: msgs,
+      views: 12,
+      created_at: new Date().toISOString(),
+    };
   },
 };

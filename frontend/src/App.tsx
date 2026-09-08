@@ -20,10 +20,10 @@ const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
 
 function PageFallback() {
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-[#090d16] text-white">
+    <div className="flex h-screen w-full items-center justify-center bg-[#0B1320] text-white">
       <div className="flex flex-col items-center gap-3">
-        <Loader2 size={28} className="animate-spin text-teal-400" />
-        <span className="text-xs text-slate-400 font-medium tracking-wide">Loading ZeoAtlas...</span>
+        <Loader2 size={28} className="animate-spin text-[#1BD582]" />
+        <span className="text-xs text-slate-400 font-medium tracking-wide">Loading Shield Funding AI Assistant...</span>
       </div>
     </div>
   );

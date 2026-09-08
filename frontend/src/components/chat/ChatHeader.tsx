@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { PanelLeft, Menu, Pencil, Trash2, Download, FileText, FileCode, ChevronDown, Share2 } from 'lucide-react';
+import { PanelLeft, Menu, Pencil, Trash2, Download, FileText, FileCode, ChevronDown, Share2, Phone, ExternalLink } from 'lucide-react';
 import { useChatStore } from '../../stores/chatStore';
 import { useUiStore } from '../../stores/uiStore';
+import ShieldLogo from '../common/ShieldLogo';
 import toast from 'react-hot-toast';
 
 export default function ChatHeader() {
@@ -30,23 +31,21 @@ export default function ChatHeader() {
 
   const exportAsMarkdown = () => {
     if (!messages || messages.length === 0) {
-      toast.error('No messages to export');
+      toast.error('No consultation messages to export');
       return;
     }
 
-    const title = activeConversation?.title || 'ZeoAtlas Chat Export';
+    const title = activeConversation?.title || 'Shield Funding Consultation Summary';
     let md = `# ${title}\n\n`;
-    md += `*Exported from ZeoAtlas on ${new Date().toLocaleString()}*\n\n---\n\n`;
+    md += `*Exported from Shield Funding AI Assistant on ${new Date().toLocaleString()}*\n\n`;
+    md += `**Toll-Free Hotline:** (888) 882-6117 | **Website:** https://shieldfunding.com\n\n---\n\n`;
 
     messages.forEach((msg) => {
       const isUser = msg.role === 'user';
-      const sender = isUser ? '👤 **You**' : '🤖 **ZeoAtlas**';
+      const sender = isUser ? '👤 **You**' : '🛡️ **Shield Funding AI Advisor**';
       const time = msg.created_at ? new Date(msg.created_at).toLocaleTimeString() : '';
-      
+
       md += `### ${sender}  \`${time}\`\n\n`;
-      if (!isUser && msg.intent) {
-        md += `> **Intent:** \`${msg.intent}\` (${Math.round((msg.confidence || 0) * 100)}%)\n\n`;
-      }
       md += `${msg.content}\n\n`;
 
       if (msg.attachments && msg.attachments.length > 0) {
@@ -64,22 +63,23 @@ export default function ChatHeader() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_chat.md`;
+    link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_consultation.md`;
     link.click();
     URL.revokeObjectURL(url);
     setExportOpen(false);
-    toast.success('Chat exported as Markdown!');
+    toast.success('Consultation exported as Markdown!');
   };
 
   const exportAsJSON = () => {
     if (!messages || messages.length === 0) {
-      toast.error('No messages to export');
+      toast.error('No consultation messages to export');
       return;
     }
 
-    const title = activeConversation?.title || 'ZeoAtlas Chat Export';
+    const title = activeConversation?.title || 'Shield Funding Consultation';
     const exportData = {
-      conversation_id: activeConversationId,
+      company: 'Shield Funding LLC',
+      consultation_id: activeConversationId,
       title,
       exported_at: new Date().toISOString(),
       messages,
@@ -89,21 +89,21 @@ export default function ChatHeader() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_chat.json`;
+    link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_consultation.json`;
     link.click();
     URL.revokeObjectURL(url);
     setExportOpen(false);
-    toast.success('Chat exported as JSON!');
+    toast.success('Consultation exported as JSON!');
   };
 
   return (
-    <header className="flex h-14 flex-shrink-0 items-center justify-between border-b border-[var(--border)] px-4">
+    <header className="flex h-14 flex-shrink-0 items-center justify-between border-b border-[var(--border)] px-4 bg-[var(--bg)]">
       <div className="flex min-w-0 items-center gap-3">
         {/* Desktop: show sidebar toggle when collapsed */}
         {!sidebarOpen && (
           <button
             onClick={toggleSidebar}
-            className="hidden rounded-md p-1.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)] transition-colors md:flex items-center justify-center"
+            className="hidden rounded-lg p-1.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)] transition-colors md:flex items-center justify-center"
             aria-label="Open sidebar"
             title="Open sidebar"
           >
@@ -114,86 +114,117 @@ export default function ChatHeader() {
         {/* Mobile menu */}
         <button
           onClick={() => setSidebarOpen(true)}
-          className="rounded-md p-1.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)] transition-colors md:hidden"
+          className="rounded-lg p-1.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)] transition-colors md:hidden"
           aria-label="Open menu"
         >
           <Menu size={18} />
         </button>
 
-        <div className="min-w-0">
-          {activeConversation ? (
-            <h2 className="truncate text-body font-medium text-[var(--text-primary)]">
-              {activeConversation.title}
-            </h2>
-          ) : (
-            <h2 className="text-body font-bold text-[var(--text-primary)]">ZeoAtlas</h2>
-          )}
-        </div>
-      </div>
-
-      {/* Action buttons when conversation is active */}
-      {activeConversation && (
-        <div className="flex items-center gap-1.5">
-          {/* Export Dropdown */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setExportOpen((prev) => !prev)}
-              className="flex items-center gap-1 rounded-lg border border-[var(--border-light)] bg-[var(--bg-secondary)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-colors"
-              title="Export conversation"
-            >
-              <Download size={13} />
-              <span>Export</span>
-              <ChevronDown size={12} className={`transition-transform ${exportOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            {exportOpen && (
-              <div className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-1 shadow-lg z-50 animate-in fade-in zoom-in-95 duration-100">
-                <button
-                  onClick={exportAsMarkdown}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
-                >
-                  <FileText size={14} className="text-teal-400" />
-                  <span>Export as Markdown (.md)</span>
-                </button>
-                <button
-                  onClick={exportAsJSON}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
-                >
-                  <FileCode size={14} className="text-amber-400" />
-                  <span>Export as JSON (.json)</span>
-                </button>
+        <div className="flex items-center gap-2.5 min-w-0">
+          {!sidebarOpen && <ShieldLogo size="sm" showSubtitle={false} className="hidden sm:flex" />}
+          <div className="min-w-0">
+            {activeConversation ? (
+              <h2 className="truncate text-xs sm:text-sm font-bold text-[var(--text-primary)]">
+                {activeConversation.title}
+              </h2>
+            ) : (
+              <div className="flex items-center gap-2">
+                <h2 className="text-xs sm:text-sm font-bold text-[var(--text-primary)]">Shield Funding AI Assistant</h2>
+                <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-semibold text-[#06C18C] bg-[#1BD582]/15 px-2 py-0.5 rounded-full">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1BD582] animate-pulse" /> Advisor Online
+                </span>
               </div>
             )}
           </div>
-
-          {/* Share Button */}
-          <button
-            onClick={() => setShareDialogOpen(true, activeConversation.id)}
-            className="flex items-center gap-1 rounded-lg border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 text-xs font-medium text-teal-400 hover:bg-teal-500/20 hover:text-teal-300 transition-colors shadow-2xs"
-            title="Share conversation"
-          >
-            <Share2 size={13} />
-            <span className="hidden sm:inline">Share</span>
-          </button>
-
-          <button
-            onClick={() => setRenameDialogId(activeConversation.id)}
-            className="rounded-md p-1.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)] transition-colors"
-            aria-label="Rename conversation"
-            title="Rename conversation"
-          >
-            <Pencil size={15} />
-          </button>
-          <button
-            onClick={() => setDeleteDialogId(activeConversation.id)}
-            className="rounded-md p-1.5 text-[var(--text-tertiary)] hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-colors"
-            aria-label="Delete conversation"
-            title="Delete conversation"
-          >
-            <Trash2 size={15} />
-          </button>
         </div>
-      )}
+      </div>
+
+      {/* Right Header CTAs */}
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Phone Hotline CTA */}
+        <a
+          href="tel:8888826117"
+          className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover)] text-xs font-semibold text-[var(--text-primary)] transition-colors"
+          title="Direct Toll-Free Phone"
+        >
+          <Phone size={13} className="text-[#06C18C]" />
+          <span>(888) 882-6117</span>
+        </a>
+
+        {/* Official Application Button */}
+        <a
+          href="https://shieldfunding.com/apply/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#1BD582] hover:bg-[#15b86f] text-[#023047] text-xs font-bold transition-all shadow-2xs"
+        >
+          <span>Apply Now</span>
+          <ExternalLink size={12} />
+        </a>
+
+        {/* Action buttons when conversation is active */}
+        {activeConversation && (
+          <div className="flex items-center gap-1">
+            {/* Export Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setExportOpen((prev) => !prev)}
+                className="flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-2 py-1 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-colors"
+                title="Export consultation"
+              >
+                <Download size={13} />
+                <span className="hidden md:inline">Export</span>
+                <ChevronDown size={12} className={`transition-transform ${exportOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {exportOpen && (
+                <div className="absolute right-0 top-full mt-1.5 w-48 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-1 shadow-lg z-50 animate-in fade-in zoom-in-95 duration-100">
+                  <button
+                    onClick={exportAsMarkdown}
+                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
+                  >
+                    <FileText size={14} className="text-[#137499]" />
+                    <span>Summary (.md)</span>
+                  </button>
+                  <button
+                    onClick={exportAsJSON}
+                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
+                  >
+                    <FileCode size={14} className="text-amber-500" />
+                    <span>Consultation Data (.json)</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Share Button */}
+            <button
+              onClick={() => setShareDialogOpen(true, activeConversation.id)}
+              className="flex items-center gap-1 rounded-lg border border-[#1BD582]/30 bg-[#1BD582]/10 px-2 py-1 text-xs font-medium text-[#06C18C] hover:bg-[#1BD582]/20 transition-colors"
+              title="Share consultation"
+            >
+              <Share2 size={13} />
+            </button>
+
+            <button
+              onClick={() => setRenameDialogId(activeConversation.id)}
+              className="rounded-lg p-1.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)] transition-colors"
+              aria-label="Rename consultation"
+              title="Rename consultation"
+            >
+              <Pencil size={14} />
+            </button>
+            <button
+              onClick={() => setDeleteDialogId(activeConversation.id)}
+              className="rounded-lg p-1.5 text-[var(--text-tertiary)] hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-colors"
+              aria-label="Delete consultation"
+              title="Delete consultation"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        )}
+      </div>
     </header>
   );
 }

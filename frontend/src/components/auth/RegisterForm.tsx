@@ -71,7 +71,7 @@ export default function RegisterForm() {
       <div>
         <h2 className="text-heading-sm font-bold text-[var(--text-primary)]">Create account</h2>
         <p className="mt-1 text-body-sm text-[var(--text-secondary)]">
-          Get started with ZeoAtlas in a few seconds.
+          Access the Shield Funding AI Assistant portal.
         </p>
       </div>
 

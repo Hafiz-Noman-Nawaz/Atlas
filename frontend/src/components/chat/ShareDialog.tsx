@@ -29,7 +29,7 @@ export default function ShareDialog() {
       const res = await chatApi.createShareLink(shareDialogConversationId);
       const fullUrl = `${window.location.origin}${res.share_url}`;
       setShareUrl(fullUrl);
-      setShareTitle(res.title || 'ZeoAtlas Conversation');
+      setShareTitle(res.title || 'Shield Funding AI Consultation');
     } catch {
       toast.error('Failed to generate public share link');
       setShareDialogOpen(false);
@@ -51,7 +51,7 @@ export default function ShareDialog() {
   };
 
   const shareOnTwitter = () => {
-    const text = encodeURIComponent(`Check out this conversation with ZeoAtlas AI: "${shareTitle}"`);
+    const text = encodeURIComponent(`Review my business financing consultation with Shield Funding AI Assistant: "${shareTitle}"`);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(shareUrl)}`, '_blank');
   };
 
@@ -60,7 +60,7 @@ export default function ShareDialog() {
   };
 
   const shareOnWhatsApp = () => {
-    const text = encodeURIComponent(`Check out this AI conversation on ZeoAtlas: ${shareUrl}`);
+    const text = encodeURIComponent(`Review this business funding consultation from Shield Funding: ${shareUrl}`);
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 

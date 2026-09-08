@@ -259,10 +259,10 @@ export default function SettingsPanel() {
               {/* Sidebar Tabs */}
               <div className="flex flex-row md:flex-col justify-start border-b md:border-b-0 md:border-r border-[var(--border)] bg-[var(--bg-secondary)] p-2 md:w-52 md:p-3 overflow-x-auto">
                 <div className="hidden md:flex items-center gap-2 px-2 py-2 mb-2">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-accent text-white font-bold text-xs">
-                    A
+                  <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#023047] text-[#1BD582] font-bold text-xs">
+                    SF
                   </div>
-                  <span className="text-sm font-semibold text-[var(--text-primary)]">Atlas Settings</span>
+                  <span className="text-xs font-bold text-[var(--text-primary)]">Advisor Settings</span>
                 </div>
 
                 <button
@@ -630,7 +630,7 @@ export default function SettingsPanel() {
                               Audio Completion Cues
                             </p>
                             <p className="text-[11px] text-[var(--text-tertiary)]">
-                              Play a subtle chime when Atlas completes generative responses.
+                              Play a subtle chime when the advisor completes funding guidance.
                             </p>
                           </div>
                         </div>
@@ -826,7 +826,7 @@ export default function SettingsPanel() {
                             onClick={() => setConfirmDeleteAccount(true)}
                             className="w-full rounded-xl bg-red-600 px-3.5 py-2.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors shadow-sm"
                           >
-                            Delete My Atlas Account
+                            Delete Client Account
                           </button>
                         ) : (
                           <div className="space-y-3 border-t border-red-500/20 pt-3">

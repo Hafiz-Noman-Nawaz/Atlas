@@ -7,12 +7,12 @@ import { chatApi } from '../../services/chatApi';
 import type { Attachment } from '../../types';
 
 const PROMPT_CHIPS = [
-  { label: '🛠️ Debug Error', prompt: 'Why is my code throwing an undefined error?' },
-  { label: '🐍 Python Code', prompt: 'Write a python code for prime numbers with explanation' },
-  { label: '💻 JavaScript DOM', prompt: 'Write a javascript code which uses event listener to change the color of the box' },
-  { label: '💾 SQL / MongoDB', prompt: 'How to create compound indexes and optimize slow queries in MongoDB?' },
-  { label: '🧠 Saved Memories', prompt: 'What do you remember about me and my notes?' },
-  { label: '⚡ Capabilities', prompt: 'What can you do and what can\'t you do?' },
+  { label: '⚡ MCA Requirements', prompt: 'What are the minimum requirements to qualify for a Merchant Cash Advance?' },
+  { label: '🔄 Line of Credit', prompt: 'How does a business line of credit work, and what interest rates apply?' },
+  { label: '🛡️ Bad Credit Funding', prompt: 'Can I get approved for funding if I have bad or fair credit?' },
+  { label: '⏱️ Funding Speed', prompt: 'How quickly can I get funded after submitting my bank statements?' },
+  { label: '📊 Term Loans vs MCA', prompt: 'What is the difference between an MCA and a traditional term loan?' },
+  { label: '📞 Speak to Advisor', prompt: 'How can I speak directly to a Shield Funding advisor?' },
 ];
 
 export default function MessageComposer() {
@@ -344,10 +344,10 @@ export default function MessageComposer() {
             onPaste={handlePaste}
             placeholder={
               isDragging
-                ? 'Drop files here...'
+                ? 'Drop financial documents or statements here...'
                 : isListening
                 ? 'Listening... Speak now'
-                : 'Message ZeoAtlas...'
+                : 'Ask about loan options, qualification requirements, or funding speed…'
             }
             rows={1}
             disabled={isSending}
@@ -361,21 +361,21 @@ export default function MessageComposer() {
             disabled={!canSend}
             className={`flex h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 items-center justify-center rounded-lg transition-all ${
               canSend
-                ? 'bg-accent text-white hover:bg-accent-light active:scale-95 shadow-sm'
+                ? 'bg-[#1BD582] text-[#023047] hover:bg-[#15b86f] active:scale-95 shadow-sm font-bold'
                 : 'bg-[var(--bg-hover)] text-[var(--text-tertiary)] cursor-not-allowed'
             }`}
             aria-label="Send message"
           >
             {isSending ? (
-              <Loader2 size={14} className="animate-spin" />
+              <Loader2 size={14} className="animate-spin text-[#023047]" />
             ) : (
               <Send size={14} />
             )}
           </button>
         </div>
 
-        <p className="mt-1 hidden sm:block text-center text-[11px] text-[var(--text-tertiary)]">
-          Paste screenshots (<kbd className="rounded border border-[var(--border)] px-1">Ctrl+V</kbd>), upload documents (PDF/DOCX/CSV), or click 🎙️ to dictate.
+        <p className="mt-1 hidden sm:block text-center text-[10.5px] text-[var(--text-tertiary)]">
+          Shield Funding AI Assistant provides commercial financing guidance • Subject to final underwriting approval.
         </p>
       </div>
     </div>

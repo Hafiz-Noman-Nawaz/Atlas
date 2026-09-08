@@ -1,10 +1,11 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Tag, FileText, Code, ExternalLink } from 'lucide-react';
+import { ShieldCheck, FileText, ExternalLink } from 'lucide-react';
 import type { Message } from '../../types';
 import { formatMessageTime } from '../../lib/utils';
 import MessageActions from './MessageActions';
 import MarkdownRenderer from './MarkdownRenderer';
+import ShieldLogo from '../common/ShieldLogo';
 
 interface Props {
   message: Message;
@@ -29,31 +30,28 @@ function MessageBubbleComponent({ message, index }: Props) {
       transition={{ duration: 0.2, delay: Math.min(index * 0.01, 0.15) }}
       className={`group flex gap-3 px-4 py-3 sm:px-6 ${isUser ? 'justify-end' : 'justify-start'}`}
     >
-      {/* Assistant avatar */}
+      {/* Assistant avatar — Official Shield Crest */}
       {!isUser && (
-        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-accent text-white shadow-xs mt-0.5">
-          <span className="text-xs font-bold">Z</span>
+        <div className="flex-shrink-0 mt-0.5">
+          <ShieldLogo size="sm" variant="icon" showText={false} />
         </div>
       )}
 
-      <div className={`max-w-[90%] sm:max-w-[80%] ${isUser ? 'items-end' : 'items-start'} flex flex-col`}>
-        {/* ML Intent badge if present on assistant response */}
-        {!isUser && message.intent && (
-          <div className="mb-1.5 flex items-center gap-1.5 rounded-full border border-teal-500/20 bg-teal-500/10 px-2.5 py-0.5 text-[11px] font-medium text-teal-400">
-            <Tag size={10} />
-            <span>Intent: {message.intent}</span>
-            {message.confidence && (
-              <span className="text-slate-400">• {Math.round(message.confidence * 100)}%</span>
-            )}
+      <div className={`max-w-[90%] sm:max-w-[82%] ${isUser ? 'items-end' : 'items-start'} flex flex-col`}>
+        {/* Shield Funding AI Advisor badge */}
+        {!isUser && (
+          <div className="mb-1.5 flex items-center gap-1 text-[11px] font-semibold text-[#06C18C] select-none">
+            <ShieldCheck size={13} />
+            <span>Shield Funding AI Advisor</span>
           </div>
         )}
 
         {/* Message bubble content */}
         <div
-          className={`rounded-2xl px-4 py-3 text-body leading-relaxed shadow-sm transition-all ${
+          className={`rounded-2xl px-4 py-3 text-body leading-relaxed shadow-xs transition-all ${
             isUser
-              ? 'bg-accent text-white rounded-br-md'
-              : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-bl-md border border-[var(--border-light)]'
+              ? 'bg-[#023047] text-white rounded-br-xs'
+              : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-bl-xs border border-[var(--border)] shadow-xs'
           }`}
         >
           {/* Attachments rendering */}
@@ -73,7 +71,7 @@ function MessageBubbleComponent({ message, index }: Props) {
                     >
                       <img
                         src={att.url}
-                        alt={att.name || 'Attached photo'}
+                        alt={att.name || 'Attached document'}
                         className="max-h-80 w-full object-cover transition-transform group-hover/img:scale-[1.01]"
                         loading="lazy"
                       />
@@ -95,11 +93,7 @@ function MessageBubbleComponent({ message, index }: Props) {
                     }`}
                   >
                     <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-black/10">
-                      {att.name.match(/\.(js|ts|py|json|html|css|jsx|tsx)$/i) ? (
-                        <Code size={16} />
-                      ) : (
-                        <FileText size={16} />
-                      )}
+                      <FileText size={16} />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-caption font-medium">{att.name}</p>
@@ -119,14 +113,14 @@ function MessageBubbleComponent({ message, index }: Props) {
           {/* Formatted Content */}
           {message.content && (
             isUser ? (
-              <p className="whitespace-pre-wrap break-words">{message.content}</p>
+              <p className="whitespace-pre-wrap break-words text-xs sm:text-sm">{message.content}</p>
             ) : (
               <MarkdownRenderer content={message.content} />
             )
           )}
         </div>
 
-        {/* Timestamp — visible on hover */}
+        {/* Timestamp */}
         <span
           className="mt-1 text-[11px] text-[var(--text-tertiary)] opacity-0 group-hover:opacity-100 transition-opacity select-none"
         >
@@ -144,7 +138,6 @@ function MessageBubbleComponent({ message, index }: Props) {
   );
 }
 
-// Memoize MessageBubble to eliminate unnecessary re-renders during live token streaming
 const MessageBubble = memo(MessageBubbleComponent, (prev, next) => {
   return (
     prev.message.id === next.message.id &&

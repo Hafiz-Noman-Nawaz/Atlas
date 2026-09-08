@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
+import ShieldLogo from '../common/ShieldLogo';
 
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
 
@@ -13,13 +14,12 @@ export default function AuthLayout() {
         className="w-full max-w-[430px]"
       >
         {/* Brand Header */}
-        <div className="mb-6 text-center">
-          <div className="mb-2.5 flex items-center justify-center gap-2.5">
-            <img src="/logo.png" alt="ZeoAtlas" className="h-10 w-10 rounded-xl object-contain shadow-lg shadow-cyan-500/20" />
-            <h1 className="text-heading-md font-bold text-[var(--text-primary)]">ZeoAtlas</h1>
+        <div className="mb-6 text-center flex flex-col items-center">
+          <div className="mb-2">
+            <ShieldLogo size="lg" showSubtitle={false} />
           </div>
           <p className="text-body-sm text-[var(--text-secondary)]">
-            Intelligent ML & Programming Assistant
+            Shield Funding AI Assistant • Commercial Capital Portal
           </p>
         </div>
 

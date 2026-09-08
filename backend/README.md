@@ -1,84 +1,102 @@
-# Atlas Backend (Node.js + Express)
+# Shield Funding AI Assistant — Backend API
 
-Production-ready Node.js + Express backend for the **Atlas Chatbot** application.
+Clean, scalable, enterprise-structured Node.js + Express + MongoDB REST API backend for the Shield Funding AI Assistant.
 
 ---
 
 ## Architecture Overview
 
 ```
-React Frontend (Vite)
-        │
-        ▼ (REST API / JWT)
-Node.js + Express Backend
-        │
-        ├── Mongoose Models (User, Conversation, Message, Feedback)
-        ├── Controllers & Middleware (JWT Auth, Error Handling, Validation)
-        └── Chatbot Engine
-                ├── Mock Mode (Built-in High-Performance JS Keyword/Topic Engine)
-                └── Real Mode (Optional External Python / ML Microservice)
+backend/
+├── config/
+│   ├── db.js                 # Mongoose connection with event listeners
+│   └── env.js                # Environment variables loader
+│
+├── controllers/
+│   ├── authController.js     # User registration, login, profile (/api/auth)
+│   ├── conversationController.js # CRUD for consultations (/api/conversations)
+│   └── messageController.js  # Message persistence & AI responses (/api/conversations/:id/messages)
+│
+├── middleware/
+│   ├── authMiddleware.js     # JWT verification
+│   ├── errorMiddleware.js    # 404 handler & centralized error handling
+│   └── rateLimiter.js        # API & Auth rate limiters
+│
+├── models/
+│   ├── User.js               # Name, email, hashed password, timestamps
+│   ├── Conversation.js       # User reference, title, timestamps
+│   └── Message.js            # Conversation reference, role, content, timestamps
+│
+├── routes/
+│   ├── index.js              # Aggregated router & /api/health endpoint
+│   ├── authRoutes.js         # /api/auth routes
+│   ├── conversationRoutes.js # /api/conversations routes
+│   └── messageRoutes.js      # /api/conversations/:id/messages routes
+│
+├── services/
+│   ├── llm/
+│   │   ├── mockLlmService.js           # Domain-specific Shield Funding mock engine
+│   │   └── llmService.placeholder.js   # Phase 2 Gemini/LLM integration placeholder
+│   ├── rag/
+│   │   └── ragService.placeholder.js   # Phase 2 Vector retrieval placeholder
+│   └── memory/
+│       └── memoryService.placeholder.js # Phase 2 Conversation buffer placeholder
+│
+├── utils/
+│   ├── apiResponse.js        # Standardized { success, data, message } response formatting
+│   └── token.js              # JWT sign & verify helpers
+│
+├── app.js                    # Express application setup, security middlewares, routes
+├── server.js                 # Server entrypoint with DB connection
+├── test_api.js               # Automated verification test suite
+├── package.json
+└── .env.example
 ```
-
----
-
-## Getting Started
-
-### 1. Prerequisites
-- **Node.js**: v18+ (tested with v24)
-- **MongoDB**: Local MongoDB instance or free cloud [MongoDB Atlas](https://www.mongodb.com/atlas) URI
-
-### 2. Installation
-```bash
-cd backend
-npm install
-```
-
-### 3. Environment Variables
-Copy `.env.example` to `.env` and adjust if needed:
-```env
-PORT=8000
-MONGODB_URI=mongodb://127.0.0.1:27017/atlas_db
-JWT_SECRET=atlas_super_secret_jwt_key_2026
-CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-CHATBOT_MODE=mock
-ML_SERVICE_URL=http://127.0.0.1:5000/predict
-```
-
-### 4. Running the Backend
-- **Development Mode (with auto-reload):**
-  ```bash
-  npm run dev
-  ```
-- **Production Mode:**
-  ```bash
-  npm start
-  ```
 
 ---
 
 ## API Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| `GET` | `/api/health` | Health check | No |
-| `POST` | `/api/auth/register` | Register new user | No |
-| `POST` | `/api/auth/login` | Login user & get JWT | No |
-| `GET` | `/api/auth/me` | Get current user profile | Yes |
-| `GET` | `/api/conversations` | List user's conversations | Yes |
-| `POST` | `/api/conversations` | Create a new conversation | Yes |
-| `GET` | `/api/conversations/:id` | Get single conversation | Yes |
-| `PATCH` | `/api/conversations/:id` | Rename conversation | Yes |
-| `DELETE` | `/api/conversations/:id` | Delete conversation (cascades) | Yes |
-| `POST` | `/api/chat` | Send message & get bot reply | Yes |
-| `GET` | `/api/conversations/:id/messages` | Get paginated messages | Yes |
-| `POST` | `/api/messages/:id/feedback` | Submit thumbs up/down rating | Yes |
+### Health Check
+- `GET /api/health` — Checks API status & MongoDB connection state.
+
+### Authentication
+- `POST /api/auth/register` — Register a new user (`name`, `email`, `password`).
+- `POST /api/auth/login` — Authenticate and receive JWT token.
+- `GET /api/auth/me` — Retrieve current authenticated user profile (`Authorization: Bearer <token>`).
+
+### Conversations
+- `GET /api/conversations` — List all conversations for the authenticated user.
+- `POST /api/conversations` — Create a new consultation (`title`).
+- `GET /api/conversations/:id` — Retrieve specific conversation details.
+- `DELETE /api/conversations/:id` — Delete conversation and all its messages.
+
+### Messages & AI Consultation
+- `GET /api/conversations/:id/messages` — Retrieve all messages in a conversation.
+- `POST /api/conversations/:id/messages` — Post user message, persist to MongoDB, and automatically trigger domain-specific AI response.
 
 ---
 
-## Chatbot Modes
+## Running Locally
 
-### 1. Mock Mode (`CHATBOT_MODE=mock`)
-Runs the built-in JavaScript keyword matching and response pool engine. Zero external dependencies, instant response time.
+1. **Install Dependencies**:
+   ```bash
+   cd backend
+   npm install
+   ```
 
-### 2. Real ML Mode (`CHATBOT_MODE=real`)
-Forwards user messages to an external ML inference service configured by `ML_SERVICE_URL`. Expects `{ message: string, intent?: string, confidence?: number }` in response.
+2. **Configure Environment**:
+   Copy `.env.example` to `.env` and set your MongoDB URI and JWT secret.
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Start Development Server**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Run Verification Test Suite**:
+   ```bash
+   node test_api.js
+   ```

@@ -1,43 +1,39 @@
-import api from './api';
 import type {
   Conversation,
   ConversationListResponse,
   ConversationUpdate,
 } from '../types';
+import { shieldMockService } from './shieldMockService';
 
 export const conversationApi = {
-  list: async (skip = 0, limit = 50): Promise<ConversationListResponse> => {
-    const res = await api.get<ConversationListResponse>('/conversations', {
-      params: { skip, limit },
-    });
-    return res.data;
+  list: async (_skip = 0, _limit = 50): Promise<ConversationListResponse> => {
+    return shieldMockService.getConversations();
   },
 
   get: async (id: string): Promise<Conversation> => {
-    const res = await api.get<Conversation>(`/conversations/${id}`);
-    return res.data;
+    const list = await shieldMockService.getConversations();
+    const found = list.items.find((c) => c.id === id);
+    if (!found) throw new Error('Conversation not found');
+    return found;
   },
 
   create: async (title?: string): Promise<Conversation> => {
-    const res = await api.post<Conversation>('/conversations', { title: title || 'New Conversation' });
-    return res.data;
+    return shieldMockService.createConversation(title || 'New Funding Consultation');
   },
 
   update: async (id: string, data: ConversationUpdate): Promise<Conversation> => {
-    const res = await api.patch<Conversation>(`/conversations/${id}`, data);
-    return res.data;
+    return shieldMockService.updateConversationTitle(id, data.title);
   },
 
   togglePin: async (id: string): Promise<Conversation> => {
-    const res = await api.patch<Conversation>(`/conversations/${id}/pin`);
-    return res.data;
+    return shieldMockService.togglePin(id);
   },
 
   delete: async (id: string): Promise<void> => {
-    await api.delete(`/conversations/${id}`);
+    return shieldMockService.deleteConversation(id);
   },
 
   deleteAll: async (): Promise<void> => {
-    await api.delete('/conversations');
+    return shieldMockService.deleteAllConversations();
   },
 };
