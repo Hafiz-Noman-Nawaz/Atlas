@@ -23,7 +23,7 @@ export default function ChatLayout() {
       </div>
 
       {/* Bottom Chatbox (Anchored directly to the bottom border) */}
-      <div className="flex-shrink-0 w-full z-20">
+      <div className="flex-shrink-0 w-full">
         <MessageComposer />
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Phone, Mail, Clock, MapPin, ExternalLink } from 'lucide-react';
 
@@ -9,9 +10,9 @@ interface Props {
 export default function ContactAdvisorModal({ isOpen, onClose }: Props) {
   if (!isOpen) return null;
 
-  return (
+  const modalContent = (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-xs overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -119,4 +120,6 @@ export default function ContactAdvisorModal({ isOpen, onClose }: Props) {
       </div>
     </AnimatePresence>
   );
+
+  return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : modalContent;
 }

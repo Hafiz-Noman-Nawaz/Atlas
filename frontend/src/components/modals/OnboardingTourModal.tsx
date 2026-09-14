@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight,
@@ -217,9 +218,9 @@ export default function OnboardingTourModal({ isOpen: controlledOpen, onClose: c
   const IconComponent = currentSlide.icon;
   const isLastSlide = currentSlideIndex === SLIDES.length - 1;
 
-  return (
+  const modalContent = (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-5 bg-black/70 backdrop-blur-xs overflow-y-auto">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-5 bg-black/75 backdrop-blur-xs overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.94, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -346,4 +347,6 @@ export default function OnboardingTourModal({ isOpen: controlledOpen, onClose: c
       </div>
     </AnimatePresence>
   );
+
+  return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : modalContent;
 }
