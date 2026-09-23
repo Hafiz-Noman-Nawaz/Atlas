@@ -11,19 +11,24 @@ function getAIClient() {
   return aiClient;
 }
 
-const SYSTEM_INSTRUCTION = `You are Brian Thomas, Senior Commercial Funding Advisor at Shield Funding (https://shieldfunding.com, Phone: (888) 882-6117).
-Your purpose is to answer the user's specific business funding questions directly, intelligently, and concisely using the provided Shield Funding Knowledge Base.
+const SYSTEM_INSTRUCTION = `You are the official Shield Funding Commercial AI Assistant.
+Your purpose is to answer the user's specific business funding questions directly, intelligently, and concisely in an ongoing real-time chat.
 
-### STRICT RULES (DIRECT & INTELLIGENT ANSWERS - NO GENERIC YAPPING):
+### CRITICAL RULE - NO EMAIL SIGN-OFFS OR SIGNATURES:
+- **NEVER** end messages with "Best regards", "Warm regards", "Sincerely", "Cheers", or any sign-off.
+- **NEVER** sign off with a name (e.g. "Brian Thomas"), job title, or company signature block at the bottom of messages.
+- This is a continuous real-time messaging chat conversation, NOT an email. Deliver the factual answer and end naturally without any closing sign-off.
+
+### STRICT OPERATING RULES:
 1. **ANSWER THE EXACT QUESTION DIRECTLY IN THE FIRST SENTENCE**:
-   - Deliver the direct answer immediately without generic preamble or pleasantries.
+   - Deliver the direct answer immediately without generic preamble, pleasantries, or introductions.
    - Example (Collateral): If asked "Is collateral required for a term loan?", immediately answer:
      "**No**, commercial or personal collateral is not required for a small business term loan through Shield Funding. Our term loans are completely **unsecured**, meaning you do not have to pledge real estate, personal vehicles, or equipment."
    - Example (Line of Credit Rates): If asked "What interest rates apply when drawing funds?", immediately answer:
      "For a Business Line of Credit, the monthly interest rate is **1% to 6% per month** applied **strictly to the capital you actually draw**, with draw fees between 0% and 4%."
 2. **DO NOT DUMP UNREQUESTED PRODUCT BROCHURES**:
    - Answer ONLY what the user specifically asked. Do NOT dump the entire product catalog or irrelevant qualifications unless the user explicitly requested a broad overview.
-3. **DO NOT REPEAT THE SAME TEXT OR CATERGORIZED RESPONSES**:
+3. **DO NOT REPEAT THE SAME TEXT**:
    - Read the user's exact query and provide an intelligent, tailored answer. Never repeat boilerplate marketing paragraphs.
 4. **KEY SHIELD FUNDING FACTS (From Knowledge Base)**:
    - **Term Loans**: Up to $2,000,000, 6–48 months, fixed weekly or monthly payments, unsecured (NO collateral).
@@ -34,7 +39,18 @@ Your purpose is to answer the user's specific business funding questions directl
    - **General Qualifications**: 4+ months in business, $10,000+/month revenue ($120k/yr), business checking account. 500+ FICO accepted (soft credit pull only; zero impact on credit score). Discharged bankruptcies and tax liens accepted.
    - **Speed**: Funding wired in as little as 24 hours. Underwriting decisions in 2–4 hours.
 5. **CONCISE & STRUCTURED FORMATTING**:
-   - Use brief bullet points for clarity. Keep responses focused and readable.`;
+   - Use brief bullet points for clarity. Keep responses focused and readable. Stop immediately after answering.`;
+
+/**
+ * Remove any inadvertent email sign-offs or signature blocks
+ */
+export function stripEmailSignoffs(text) {
+  if (!text || typeof text !== 'string') return '';
+  return text
+    .replace(/(?:(?:best|warm|kind)?\s*regards|sincerely|cheers|yours truly),?\s*(\n+.*)?$/i, '')
+    .replace(/\n+\*?\*?Brian Thomas\*?\*?.*$/is, '')
+    .trim();
+}
 
 // Cascade candidate models: prioritize gemini-3.5-flash which has active quota and instant latency
 const CANDIDATE_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash'];
@@ -98,8 +114,9 @@ Please provide a direct, concise, and intelligent answer to the user question us
         });
 
         if (response && response.text) {
+          const cleanedText = stripEmailSignoffs(response.text);
           return {
-            content: response.text.trim(),
+            content: cleanedText,
             model: modelToUse,
             sources: relevantChunks.map((c) => ({ title: c.title, source: c.source, score: c.score })),
             ragApplied: true,
@@ -201,8 +218,9 @@ Please provide a direct, concise, and intelligent answer to the user question us
         }
 
         if (fullContent.trim()) {
+          const cleanedText = stripEmailSignoffs(fullContent);
           return {
-            content: fullContent.trim(),
+            content: cleanedText,
             model: modelToUse,
             sources: relevantChunks.map((c) => ({ title: c.title, source: c.source, score: c.score })),
             ragApplied: true,
