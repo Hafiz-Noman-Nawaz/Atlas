@@ -125,223 +125,469 @@ export const SHIELD_PRODUCTS: ShieldProduct[] = [
   },
 ];
 
-// Shield Funding Knowledge Base Responses
+// Shield Funding Official Knowledge Base Responses Engine
 export function generateShieldResponse(query: string): string {
   const q = query.toLowerCase().trim();
 
-  // 1. Funding Options Overview
+  // 1. Business Line of Credit (LOC) & Revolving Credit / Draws / LOC Rates
   if (
-    q.includes('funding option') ||
-    q.includes('what options') ||
-    q.includes('what products') ||
-    q.includes('types of loan') ||
-    q.includes('services') ||
-    q.includes('what do you offer')
+    q.includes('line of credit') ||
+    q.includes('credit line') ||
+    q.includes('loc') ||
+    (q.includes('draw') && !q.includes('withdrawn') && !q.includes('drawing pictures')) ||
+    (q.includes('revolving') && (q.includes('credit') || q.includes('capital') || q.includes('rate') || q.includes('fund')))
   ) {
-    return `### 🛡️ Shield Funding Business Financing Solutions
+    if (q.includes('rate') || q.includes('interest') || q.includes('cost') || q.includes('fee') || q.includes('apr') || q.includes('draw')) {
+      return `### 🔄 Business Line of Credit: Interest Rates & Draw Structure
 
-Shield Funding provides fast, flexible capital solutions tailored to your unique cash flow needs and growth goals. Here is an overview of our core financing products:
-
----
-
-#### 1. **Merchant Cash Advance (MCA)**
-* **Funding Amount:** $5,000 to $500,000+
-* **Speed to Capital:** 24 to 48 hours *(Same-day approvals)*
-* **Best For:** Fast working capital, payroll, seasonal inventory.
-* **Key Feature:** Flexible remittances that adjust automatically with your daily or weekly credit card/bank sales. Bad credit accepted.
-
-#### 2. **Business Line of Credit**
-* **Funding Amount:** $10,000 to $250,000
-* **Speed to Capital:** 1 to 3 business days
-* **Best For:** Managing ongoing cash flow fluctuations & unexpected expenses.
-* **Key Feature:** Draw capital on-demand and pay interest **only on the funds you use**.
-
-#### 3. **Small Business Term Loans**
-* **Funding Amount:** $10,000 to $1,000,000+
-* **Term Length:** 6 to 36 months
-* **Best For:** Major expansion, hiring, bulk purchasing, or new equipment.
-* **Key Feature:** Predictable fixed payments with competitive rates starting from 8.99%.
-
-#### 4. **Equipment Financing**
-* **Funding Amount:** Up to $2,000,000 *(Up to 100% equipment cost)*
-* **Best For:** Heavy machinery, commercial vehicles, technology, restaurant gear.
-* **Key Feature:** The equipment itself secures the financing, preserving working capital.
-
-#### 5. **Invoice Factoring (A/R Financing)**
-* **Funding Amount:** $20,000 to $1,500,000
-* **Best For:** B2B companies with 30, 60, or 90-day client payment terms.
-* **Key Feature:** Advance up to 90% of unpaid invoices within 24 hours.
+For a **Business Line of Credit** with Shield Funding, interest and fees are structured on a flexible revolving basis:
 
 ---
 
-### 📋 Basic Requirements:
-• **4+ Months** in business  
-• **$10,000+** in gross monthly revenue ($120k/year)  
-• **U.S. Business Checking Account**
+#### 📊 Interest Rates & Pricing Details:
+* **Monthly Interest Rate:** **1% – 6% per month** applied **only** to the active drawn balance *(starts at approximately **14% annual finance charge**)*.
+* **Pay Only What You Use:** You **never** pay interest on your unused credit limit. If you have a $100,000 credit line and draw $20,000, you only accrue interest on that $20,000.
+* **Draw Fees:** Typically **0% to 4%** per draw, depending on your business credit and revenue profile.
+* **Credit Limit Available:** Up to **$200,000** (with no minimum requirement).
+* **Repayment Frequency:** Convenient **monthly payments**.
+* **Facility Duration:** **24 Months**, fully renewable as you maintain good repayment standing.
 
-Would you like to check your eligibility for a specific product or calculate your estimated funding amount?`;
+---
+
+#### 💡 How Revolving Draws Work:
+1. **On-Demand Access:** Draw funds 24/7 whenever an emergency, payroll, or business opportunity arises.
+2. **Instant Replenishment:** As you pay down your monthly balance, your available capital replenishes automatically back to your maximum credit limit.
+3. **No Prepayment Penalties:** Pay off drawn balances at any time without fees to minimize total interest expense.
+
+---
+
+#### 📋 Basic Qualifications:
+* **4+ Months** in business  
+* **$10,000+** monthly gross revenue ($120k/year)  
+* Active U.S. Business Checking Account  
+* **Soft credit pull only** — reviewing offers will **not** impact your personal FICO score.
+
+Would you like to calculate estimated payments or speak directly with a funding advisor at **[(888) 882-6117](tel:8888826117)**?`;
+    }
+
+    return `### 🔄 Shield Funding Business Line of Credit Overview
+
+A **Business Line of Credit** provides flexible, revolving access to capital that you can draw against anytime cash flow fluctuates or new opportunities arise.
+
+---
+
+#### 🛡️ Key Features:
+* **Credit Limit:** Up to **$200,000** (no minimum requirement).
+* **Monthly Interest:** **1% to 6% per month** *(starts at ~14% annual finance charge)*.
+* **Pay Interest Only on Drawn Funds:** Zero cost while your line sits untouched.
+* **Draw Fees:** **0% to 4%**.
+* **Repayment Schedule:** Flexible **monthly payments**.
+* **Term:** **24 Months**, renewable.
+* **Speed:** Access funds in **1 to 3 business days** via direct ACH transfer.
+
+---
+
+#### 💡 When to Use a Line of Credit:
+* Managing seasonal inventory peaks and supplier discounts
+* Bridging customer payment gaps (accounts receivable lag)
+* Covering unexpected emergency repairs or payroll timing
+* Keeping a safety net for sudden business opportunities
+
+Would you like to check pre-qualification requirements or see how much your business can be approved for?`;
   }
 
-  // 2. Requirements & Qualifications
+  // 2. Merchant Cash Advance (MCA) Rates & Terms
   if (
-    q.includes('requirement') ||
-    q.includes('qualify') ||
+    q.includes('mca') ||
+    q.includes('merchant cash advance') ||
+    q.includes('factor rate') ||
+    q.includes('remittance') ||
+    q.includes('sales advance')
+  ) {
+    if (q.includes('difference') || q.includes('vs') || q.includes('versus') || q.includes('compare')) {
+      return `### 📊 Merchant Cash Advance (MCA) vs. Traditional Commercial Loan
+
+Here is how a Merchant Cash Advance compares side-by-side with a traditional business term loan:
+
+---
+
+| Comparison Factor | Merchant Cash Advance (MCA) | Traditional Term Loan |
+| :--- | :--- | :--- |
+| **Legal Nature** | Purchase of future receivables | Commercial debt obligation |
+| **Funding Speed** | **24 – 48 Hours** *(Same-day available)* | **1 – 4 Weeks** (Longer underwriting) |
+| **Credit Requirement** | **Flexible (500+ FICO)** | **Stricter (650+ FICO typically)** |
+| **Collateral** | **None Required** (100% Unsecured) | Real estate, equipment, or business assets |
+| **Repayment Structure** | **Flexible % of daily or weekly sales** | **Fixed monthly amortized payments** |
+| **Slow Season Impact** | **Payments automatically drop when sales drop** | Fixed payment remains the same |
+| **Pricing Metric** | Factor Rate (**1.10 – 1.50**) | Annual Percentage Rate (APR) |
+| **Prepayment Discount** | **Up to 25%–100% of interest/fee saved** | Varies / Prepayment penalties common |
+
+---
+
+#### 💡 Summary Recommendation:
+* Choose an **MCA** if you need fast working capital within 24–48 hours, have variable seasonal revenues, or have credit challenges (500+ FICO).
+* Choose a **Term Loan** if you have strong credit (650+) and prefer a predictable fixed monthly payment over 1 to 4 years.`;
+    }
+
+    return `### ⚡ Shield Funding Merchant Cash Advance (MCA)
+
+A **Merchant Cash Advance** provides fast lump-sum working capital in exchange for a fixed percentage of your future receivables or bank deposits.
+
+---
+
+#### 📊 Pricing & Key Terms:
+* **Advance Amount:** Up to **$2,000,000** (no minimum requirement).
+* **Factor Rates:** Range from **1.10 to 1.50** depending on your cash flow profile and time in business.
+* **Pricing Metric:** A simple, fixed fee — **no compounding interest**!
+  * *Example:* A $10,000 advance at a 1.25 factor rate has a total payback of $12,500 ($10,000 advance + $2,500 fixed cost).
+* **Payment Frequency:** **Daily or Weekly ACH remittances** aligned with your incoming card sales or bank deposits.
+* **Duration:** Typically **3 to 24 months**.
+* **Early Payoff Discounts:** Shield Funding offers **25% to 100% forgiveness** of remaining fees when paid off early!
+* **Credit Friendly:** Business owners with **credit scores down to 500 FICO** qualify based on monthly revenue health.
+
+Would you like to calculate estimated remittances for a specific dollar amount?`;
+  }
+
+  // 3. Small Business Term Loans
+  if (
+    q.includes('term loan') ||
+    q.includes('commercial term') ||
+    q.includes('fixed rate') ||
+    q.includes('amortized') ||
+    q.includes('term business')
+  ) {
+    return `### 📈 Small Business Term Loans
+
+Shield Funding offers traditional **Small Business Term Loans** designed for established businesses seeking predictable fixed financing for long-term investments.
+
+---
+
+#### 📊 Loan Features:
+* **Loan Amount:** Up to **$2,000,000** (no minimum).
+* **Interest Rates:** Starting at **~30% APR** depending on risk tier and term duration.
+* **Repayment Terms:** **6 to 48 months** (up to 4 years).
+* **Payment Frequency:** Predictable **Weekly or Monthly fixed payments**.
+* **Collateral:** Unsecured options available for qualified businesses.
+* **Allowable Uses:** Commercial expansion, inventory purchases, hiring, or refinancing high-cost short-term debt.
+
+---
+
+#### 📋 Qualifications for Term Loans:
+* **6+ Months** in business (2+ years for prime rates)
+* **$15,000+** in gross monthly revenue ($180k+ annual)
+* **600+ FICO** personal credit score
+* Active U.S. business checking account with healthy average balances
+
+Would you like to estimate your monthly payments or check if you qualify?`;
+  }
+
+  // 4. Equipment Financing
+  if (
+    q.includes('equipment') ||
+    q.includes('machinery') ||
+    q.includes('vehicle') ||
+    q.includes('truck') ||
+    q.includes('lease')
+  ) {
+    return `### 🚜 Commercial Equipment Financing
+
+Shield Funding helps business owners acquire heavy machinery, commercial vehicles, and specialized equipment with minimal cash out of pocket.
+
+---
+
+#### 📊 Program Terms:
+* **Funding Amount:** **$10,000 up to Multi-Million Dollar** opportunities.
+* **Coverage:** **Up to 100% of equipment cost covered** — zero upfront cash needed!
+* **Annual Rates:** **10% – 15% annual rate**, secured terms.
+* **Term Length:** Typically **5-year terms** (structured to match equipment lifespan).
+* **Funding Speed:** Same-day financing available — walk out with your equipment upon dealer approval.
+* **Collateral:** The equipment itself secures the financing, preserving your cash reserves and working capital.
+* **Tax Benefit:** Fully eligible for **IRS Section 179 tax depreciation write-offs**!
+
+---
+
+#### 📋 Requirements:
+* **620+ FICO** personal credit score
+* **At least 1 year** in business
+* Must purchase from a recognized new or used commercial dealer
+* Eligible industries: Construction, medical, manufacturing, and specialty trade *(Note: OTR commercial semi-trucks restricted)*.
+
+Would you like to submit an invoice or quote for instant equipment pre-approval?`;
+  }
+
+  // 5. Invoice Factoring (Accounts Receivable Financing)
+  if (
+    q.includes('factoring') ||
+    q.includes('invoice') ||
+    q.includes('receivable') ||
+    q.includes('unpaid invoice') ||
+    q.includes('net 30') ||
+    q.includes('b2b')
+  ) {
+    return `### 🧾 Invoice Factoring (Accounts Receivable Financing)
+
+Turn your outstanding 30, 60, or 90-day B2B customer invoices into instant cash within 24 hours.
+
+---
+
+#### 📊 Program Highlights:
+* **Advance Rate:** Advance up to **80% – 90%** of total invoice value upfront.
+* **Facility Size:** **$20,000 up to $1,500,000+** (focusing on transactions from $100k to $500k).
+* **Zero Balance Sheet Debt:** Factoring is an **asset sale**, not a loan, so it does not add debt liabilities to your balance sheet.
+* **Approval Based on Customer Credit:** We evaluate the creditworthiness and payment history of your **B2B clients**, not your personal credit!
+* **Startups Welcome:** Recent startups qualify with no revenue history required if billing approved B2B clients.
+* **Turnaround:** Receive funds directly into your account within **24 hours** of invoice verification.
+
+---
+
+#### 🏢 Who It's Best For:
+* Staffing agencies, wholesale distributors, logistics, manufacturing, and government contractors.
+*(Note: Medical insurance third-party billing and California deals currently excluded).*
+
+Would you like to learn how to upload your customer invoices for quick review?`;
+  }
+
+  // 6. SBA 7(a) & Express Loans
+  if (
+    q.includes('sba') ||
+    q.includes('sba 7') ||
+    q.includes('small business administration') ||
+    q.includes('government backed')
+  ) {
+    return `### 🏛️ SBA 7(a) & Express Loans
+
+Government-backed SBA loans provide the largest capital availability and lowest long-term interest rates on the commercial market.
+
+---
+
+#### 📊 Program Overview:
+* **Maximum Loan Amount:** Up to **$15,000,000**.
+* **Interest Rates:** Highly competitive, starting around **Prime + 3%**.
+* **Repayment Terms:** Long-term amortizations up to **10 to 25 Years**.
+* **Repayment Frequency:** Low fixed **monthly payments**.
+* **Collateral:** Options under $350,000 can be completely **unsecured**.
+* **Allowable Uses:** Business acquisition, partner buyouts, commercial real estate purchase, large-scale expansion, or refinancing conventional debt.
+
+---
+
+#### 📋 Qualification Criteria:
+* **640+ FICO** personal credit score (700+ for startups with real estate collateral)
+* **2+ Years** in business with strong profitable tax returns
+* Debt Service Coverage Ratio (DSCR) showing clear ability to repay
+* Complete financial documentation (3 years tax returns, P&L, balance sheets, and debt schedules)
+
+Ready to see if your business qualifies for an SBA loan package?`;
+  }
+
+  // 7. General Interest Rates & Pricing Comparison
+  if (
+    q.includes('interest rate') ||
+    q.includes('what are the rates') ||
+    q.includes('what rate') ||
+    q.includes('how much does it cost') ||
+    q.includes('cost of funding') ||
+    q.includes('apr') ||
+    q.includes('rates and fees') ||
+    q.includes('origination fee') ||
+    q.includes('hidden fee') ||
+    q.includes('upfront fee')
+  ) {
+    return `### 💰 Shield Funding Rates, APR & Fee Breakdown
+
+At Shield Funding, transparency is our core principle. Here is the clear rate breakdown across all of our commercial funding programs:
+
+---
+
+| Financing Product | Interest / Pricing Metric | Payment Frequency | Term Length |
+| :--- | :--- | :--- | :--- |
+| **Business Line of Credit** | **1% – 6% monthly interest** on drawn funds *(~14% annual finance charge)* | Monthly | 24 Months, renewable |
+| **Merchant Cash Advance** | **1.10 – 1.50 Factor Rate** *(no compounding interest)* | Daily or Weekly ACH | 3 – 24 Months |
+| **Small Business Term Loan** | Starting from **~30% APR** | Weekly or Monthly | 6 – 48 Months |
+| **Equipment Financing** | **10% – 15% Annual Rate** | Monthly | Up to 5 Years |
+| **Invoice Factoring** | **1% – 3% Discount Fee** per 30 days | Paid upon client settlement | 30 – 90 Days |
+| **SBA 7(a) Loans** | **Prime + ~3%** *(lowest long-term APR)* | Monthly | 10 – 25 Years |
+
+---
+
+#### 🛡️ Transparent Fee Policies:
+* **ZERO Upfront Application Fees:** We never charge fees just to apply or review term sheets.
+* **Origination Fees:** Standard administrative underwriting fees (if applicable) are deducted directly from funded capital at closing — never out of pocket.
+* **Early Payoff Discounts:** Up to **25% – 100% fee forgiveness** on MCAs and lines of credit when paid early.
+
+Would you like to calculate estimated payments for a specific amount?`;
+  }
+
+  // 8. Payment Calculations & Estimator
+  if (
+    q.includes('calculate') ||
+    q.includes('calculator') ||
+    q.includes('estimate payment') ||
+    q.includes('how much will i pay') ||
+    q.includes('monthly payment') ||
+    /\$\d+/.test(q)
+  ) {
+    return `### 🧮 Estimated Repayment Calculations
+
+Here are typical payment structures for common funding amounts with Shield Funding:
+
+---
+
+#### 💡 Scenario 1: $25,000 Advance (12 Months)
+* **Factor Rate (MCA):** ~1.22
+* **Total Payback:** $30,500 ($25,000 principal + $5,500 fixed cost)
+* **Estimated Weekly Payment:** ~$635 / week
+* **Early Payoff Option:** Settle in 6 months to save up to 50% of the fee!
+
+#### 💡 Scenario 2: $50,000 Line of Credit (Drawn for 90 Days)
+* **Monthly Interest Rate:** ~2.5% per month
+* **Monthly Interest Due:** ~$1,250 / month while drawn
+* **Total Interest for 3 Months:** ~$3,750
+* **Repayment:** Pay back the $50k principal whenever your receivables land, eliminating further interest!
+
+#### 💡 Scenario 3: $100,000 Small Business Term Loan (24 Months)
+* **APR:** ~32%
+* **Estimated Monthly Payment:** ~$5,680 / month
+* **Total Cost of Capital:** Predictable fixed amortization
+
+---
+
+💡 **Tip:** You can also click the **Calculator** button in the top navigation bar to test custom loan amounts, terms, and payment schedules interactively!`;
+  }
+
+  // 9. Qualifications, Credit Score, Bankruptcies, Requirements
+  if (
+    q.includes('qualif') ||
+    q.includes('require') ||
     q.includes('eligible') ||
     q.includes('criteria') ||
-    q.includes('minimum')
+    q.includes('minimum') ||
+    q.includes('credit score') ||
+    q.includes('bad credit') ||
+    q.includes('fico') ||
+    q.includes('low credit') ||
+    q.includes('bankruptcy') ||
+    q.includes('tax lien') ||
+    q.includes('bank statement')
   ) {
     return `### 📋 Shield Funding Qualification Requirements
 
-At Shield Funding, our underwriting focuses primarily on your **business cash flow and revenue health**, rather than strict personal credit scores or endless bureaucratic paperwork.
+Shield Funding evaluates approvals based primarily on your **business cash flow and regular deposits**, rather than strict personal credit scores.
 
 ---
 
-#### 🎯 Core Minimum Qualifications:
-1. **Time in Business:** At least **4+ months** of active operations *(6–12+ months opens access to prime rates & higher credit lines)*.
-2. **Monthly Revenue:** A minimum of **$10,000+ in monthly gross sales** ($120,000 annual gross revenue).
-3. **Business Bank Account:** An active U.S. business checking account in the company's legal name.
-4. **Credit Considerations:** We work with **all credit profiles (500+ FICO)**. Bad credit or past bankruptcies do not automatically disqualify you.
+#### 🎯 Minimum Qualification Criteria:
+* **Time in Business:** At least **4+ Months** of active operations *(1+ year unlocks prime rates and larger term loans)*.
+* **Monthly Revenue:** A minimum of **$10,000+ in gross monthly sales** ($120,000 annual gross revenue).
+* **Bank Account:** An active U.S. **business checking account** (personal bank accounts are not eligible).
+* **Credit Profile:** We approve business owners with **500+ FICO scores**.
+* **NSF / Negative Days:** Up to 5 NSFs allowed in the most recent month; 2 or fewer negative days preferred.
 
 ---
 
-#### 📑 Documents Needed for Fast Approval:
-* **Completed 1-Page Online Application** (takes under 2 minutes).
-* **3 to 4 Months of Recent Business Bank Statements** (PDFs or secure digital link).
-* **Government-Issued Photo ID** (Driver's License or Passport).
-* **Voided Business Check** (for ACH disbursement).
-
-> 💡 **No Tax Returns or Extensive Financial Statements** are required for standard working capital advances and business lines of credit under $150,000!
+#### 🛡️ Challenged Credit Questions Answered:
+* **Past Bankruptcies:** Discharged bankruptcies are **accepted**.
+* **Tax Liens:** Existing federal or state tax liens do **not** automatically disqualify you.
+* **Soft Pull Inquiry:** Our initial review uses a **soft credit inquiry only**, which will **never impact your personal credit score**.
+* **No Collateral Needed:** Most working capital advances and lines of credit are **100% unsecured**.
 
 ---
 
-📞 **Speak to a Funding Specialist Today:** Call [(888) 882-6117](tel:8888826117) or start your [Quick Application Online](https://shieldfunding.com/apply/).`;
+#### 📄 Documents Needed to Fund:
+1. **1-Page Digital Application** (takes 2 minutes)
+2. **3 to 4 Months of Business Bank Statements** (PDFs or instant digital link)
+3. Government-issued photo ID and voided business check (to wire funds)
+
+Would you like to start a pre-qualification review online or call our desk at **[(888) 882-6117](tel:8888826117)**?`;
   }
 
-  // 3. Funding Speed & Timelines
+  // 10. Funding Speed, Timelines & Sameday Wire
   if (
     q.includes('how quick') ||
     q.includes('how fast') ||
+    q.includes('speed') ||
     q.includes('same day') ||
     q.includes('timeline') ||
-    q.includes('speed') ||
-    q.includes('how long')
+    q.includes('how long') ||
+    q.includes('wire')
   ) {
-    return `### ⚡ Shield Funding Timeline: From Application to Funded
+    return `### ⚡ Shield Funding Timeline: From Application to Direct Wire
 
-Shield Funding specializes in high-speed commercial capital. Here is our exact approval and disbursement timeline:
+Shield Funding specializes in rapid commercial funding with some of the fastest turnaround times in the alternative finance industry:
 
 ---
 
-| Stage | Expected Duration | What Happens |
+| Stage | Expected Duration | Details |
 | :--- | :--- | :--- |
-| **1. Digital Application** | **2 Minutes** | Fill out our secure 1-page form with basic business & revenue details. |
-| **2. Underwriting Review** | **2 – 4 Hours** | Your dedicated funding advisor evaluates your bank statements and matches you with top lenders. |
-| **3. Decision & Offer** | **Same Day** | Receive your official term sheet showing approved amount, rates, and remittance options. |
-| **4. Capital Disbursement** | **24 – 48 Hours** | Wire transfer or ACH direct deposit directly into your business checking account. |
+| **1. Digital Application** | **2 Minutes** | Fill out our simple online form with basic revenue details. |
+| **2. Underwriting Review** | **2 – 4 Hours** | Advisors analyze your bank statements with AI-powered matching to 50+ lenders. |
+| **3. Term Sheet & Offer** | **Same Day** | Receive your official offer outlining approved amount, rates, and remittance options. |
+| **4. Direct Wire Transfer** | **24 – 48 Hours** | Sign digital documents and receive funds directly via ACH or wire into your checking account. |
 
 ---
 
 #### 🚀 Need Same-Day Emergency Funding?
-For urgent payroll, supplier demands, or inventory purchases, submit your application and bank statements **before 1:00 PM EST** to qualify for **Same-Day ACH Wire Transfer**.
+For urgent payroll, inventory, or emergency repairs, submit your application and bank statements **before 1:00 PM EST** to qualify for **Same-Day ACH Wire Transfer**!
 
-Ready to get started? [Apply Now in 2 Minutes](https://shieldfunding.com/apply/) or call [(888) 882-6117](tel:8888826117).`;
+Call our direct underwriting desk at **[(888) 882-6117](tel:8888826117)** to expedite your review.`;
   }
 
-  // 4. Bad Credit / Credit Score Questions
+  // 11. Early Payoff Discounts / Prepayment / Consolidation
   if (
-    q.includes('bad credit') ||
-    q.includes('credit score') ||
-    q.includes('low credit') ||
-    q.includes('fico') ||
-    q.includes('poor credit')
+    q.includes('early pay') ||
+    q.includes('prepay') ||
+    q.includes('refinance') ||
+    q.includes('consolidat') ||
+    q.includes('renew')
   ) {
-    return `### 🛡️ Does Shield Funding Work with Bad or Fair Credit?
+    return `### 💵 Early Payoff Discounts & Refinancing
 
-**Yes, absolutely.** Shield Funding has helped thousands of business owners obtain funding regardless of their personal credit score.
-
----
-
-#### Why Credit Score Isn’t the Only Factor:
-* **Revenue-Based Underwriting:** We evaluate your business based on its **monthly cash flow, consistent bank deposits, and revenue trajectory** — not just your personal FICO score.
-* **Minimum FICO:** We can fund business owners with credit scores as low as **500 FICO**.
-* **Past Bankruptcies or Tax Liens:** While they are reviewed, open or satisfied credit challenges do not automatically bar you from receiving capital.
-* **Credit Building Opportunity:** Making timely payments on a Business Line of Credit or Term Loan can help build and strengthen your commercial credit profile.
+Shield Funding rewards responsible borrowers who settle their financing ahead of schedule.
 
 ---
 
-#### Recommended Products for Bad/Fair Credit:
-1. **Merchant Cash Advance (MCA):** Fastest approval, structured directly around your daily sales volume.
-2. **Invoice Factoring:** Approvals based on your **customers' credit**, not yours.
-3. **Equipment Financing:** The physical machinery acts as collateral, reducing credit requirements.
+#### 🛡️ Early Payoff Advantages:
+* **Fee Forgiveness:** Depending on your agreement, we offer **10% to 100% forgiveness of remaining fees** if you pay off your advance early.
+* **No Prepayment Penalties:** Unlike traditional bank loans with stiff penalties, paying off your balance early directly saves your business money.
+* **Facility Renewals:** Once you have paid down **25% to 50%** of your active advance or loan, you become eligible for renewals with increased funding limits and lower factor rates.
+* **Debt Consolidation:** If you currently have multiple high-cost advances, Shield Funding can consolidate them into a single, manageable monthly or weekly payment to free up cash flow.
 
-Would you like to explore what funding tier your monthly revenue qualifies for?`;
+Would you like our advisory team to review your current debt schedule for consolidation options?`;
   }
 
-  // 5. MCA vs Business Loan Comparison
-  if (
-    q.includes('mca') ||
-    q.includes('difference') ||
-    q.includes('versus') ||
-    q.includes('vs') ||
-    q.includes('merchant cash advance vs')
-  ) {
-    return `### 📊 Merchant Cash Advance (MCA) vs. Traditional Business Loan
+  // 12. Explicit Application Process / How to Apply
+  const isHowToApply =
+    q.includes('how to apply') ||
+    q.includes('how do i apply') ||
+    q.includes('where to apply') ||
+    q.includes('where do i apply') ||
+    q.includes('application process') ||
+    q.includes('steps to apply') ||
+    q.includes('steps to get funded') ||
+    q.includes('start an application') ||
+    q.includes('how can i apply') ||
+    q.includes('sign up for funding') ||
+    (q.startsWith('apply') && !q.includes('rate') && !q.includes('interest') && !q.includes('credit') && !q.includes('fee'));
 
-Understanding the difference between an MCA and a term loan helps you choose the right financing strategy for your business:
+  if (isHowToApply) {
+    return `### 🚀 How to Apply for Business Funding with Shield Funding
 
----
-
-| Comparison Factor | Merchant Cash Advance (MCA) | Traditional Business Loan |
-| :--- | :--- | :--- |
-| **Legal Nature** | Purchase of future receivables | Debt loan with principal + interest |
-| **Funding Speed** | **24 – 48 Hours** (Same-day available) | **1 – 4 Weeks** (Longer underwriting) |
-| **Credit Requirement** | **Flexible (500+ FICO)** | **Stricter (650+ FICO typically)** |
-| **Collateral** | **None Required** (Unsecured) | Real estate, equipment, or assets |
-| **Repayment Structure** | **Flexible % of daily/weekly sales** | **Fixed monthly amortized payments** |
-| **Slow Season Impact** | **Payments drop during slow sales** | Fixed payment remains the same |
-| **Pricing Metric** | Factor Rate (e.g., 1.15 – 1.40) | Annual Percentage Rate (APR) |
-
----
-
-#### 💡 When to Choose an MCA:
-* You need capital in under 48 hours for immediate opportunities or emergencies.
-* Your revenue fluctuates seasonally and you want payments that drop when sales slow.
-* You have less-than-perfect credit but strong, consistent monthly deposits ($10k+).
-
-#### 💡 When to Choose a Term Loan:
-* You have established credit (650+) and want a predictable fixed monthly payment over 1 to 3 years.
-* You are funding a planned long-term capital expansion.
-
-Feel free to ask for a custom recommendation based on your business model!`;
-  }
-
-  // 6. Application Process / How to Apply
-  if (
-    q.includes('apply') ||
-    q.includes('how to start') ||
-    q.includes('application') ||
-    q.includes('get started') ||
-    q.includes('sign up')
-  ) {
-    return `### 🚀 How to Apply for Funding with Shield Funding
-
-Applying with Shield Funding is fast, secure, and will **not affect your personal credit score** during the initial review.
+Applying with Shield Funding is fast, 100% digital, and will **not affect your personal credit score** during the initial review.
 
 ---
 
 #### 4 Simple Steps to Get Funded:
 
-1. **Step 1: Complete the Online Application (2 Minutes)**
+1. **Step 1: Complete the Online Application (2 Minutes)**  
    Fill out basic details about your business name, monthly revenue, and requested funding amount at [shieldfunding.com/apply](https://shieldfunding.com/apply/).
 
-2. **Step 2: Submit 3 Months of Bank Statements**
-   Upload PDF copies of your 3 most recent business bank statements, or connect securely via our digital bank verification partner for instant review.
+2. **Step 2: Submit 3 to 4 Months of Bank Statements**  
+   Upload PDF copies of your recent business bank statements or connect securely via our digital bank verification partner for instant review.
 
-3. **Step 3: Review Your Custom Offers**
+3. **Step 3: Review Your Custom Offers**  
    Your dedicated Shield Funding advisor will contact you with matched funding offers, transparent terms, and repayment options.
 
-4. **Step 4: Receive Your Capital in 24 Hours**
-   Sign your digital agreement and receive your funds directly via ACH deposit into your business checking account.
+4. **Step 4: Receive Your Capital in 24 Hours**  
+   Sign your digital agreement and receive your funds directly via ACH wire deposit into your business checking account.
 
 ---
 
@@ -349,7 +595,7 @@ Applying with Shield Funding is fast, secure, and will **not affect your persona
 Call our senior funding team directly at **[(888) 882-6117](tel:8888826117)** (Mon–Fri, 9:00 AM – 7:00 PM EST).`;
   }
 
-  // 7. Contact / Phone / About Company
+  // 13. Contact / Advisor Phone / Company Profile
   if (
     q.includes('contact') ||
     q.includes('phone') ||
@@ -357,7 +603,10 @@ Call our senior funding team directly at **[(888) 882-6117](tel:8888826117)** (M
     q.includes('number') ||
     q.includes('address') ||
     q.includes('about') ||
-    q.includes('who are you')
+    q.includes('who are you') ||
+    q.includes('speak to human') ||
+    q.includes('representative') ||
+    q.includes('advisor')
   ) {
     return `### 🏢 About Shield Funding & Contact Information
 
@@ -387,7 +636,7 @@ Shield Funding is a premier American commercial finance broker dedicated to help
 How can we assist your business today?`;
   }
 
-  // 8. Default Tailored Financial Response
+  // 14. Default Tailored Financial Response
   return `### 🛡️ Shield Funding AI Assistant
 
 Thank you for your inquiry regarding business financing options with Shield Funding.
@@ -395,18 +644,18 @@ Thank you for your inquiry regarding business financing options with Shield Fund
 ---
 
 #### 💡 How We Can Help Your Business:
-* **Fast Working Capital:** Access from **$5,000 up to $1,000,000+** within 24 to 48 hours.
-* **Flexible Options:** Merchant Cash Advances, Business Lines of Credit, Term Loans, Equipment Financing, and Invoice Factoring.
-* **Simple Requirements:** Only **4+ months in business** and **$10,000+ monthly revenue** required. All credit scores considered.
+* **Fast Working Capital:** Access from **$5,000 up to $2,000,000+** within 24 to 48 hours.
+* **Flexible Capital Programs:** Merchant Cash Advances, Business Lines of Credit, Term Loans, Equipment Financing, Invoice Factoring, and SBA Loans.
+* **Simple Requirements:** Only **4+ months in business** and **$10,000+ monthly revenue** required. All credit scores considered (500+ FICO). Soft credit pull only.
 
 ---
 
-#### 🔍 Popular Questions You Can Ask:
-1. *"What funding options does Shield Funding offer?"*
-2. *"What are the requirements to qualify?"*
-3. *"How quickly can I get funded?"*
-4. *"Do you work with businesses with bad credit?"*
-5. *"What is the difference between an MCA and a business term loan?"*
+#### 🔍 Specific Questions You Can Ask Me:
+1. *"What interest rates apply when drawing funds from a business line of credit?"*
+2. *"How does an MCA work, and what are typical factor rates?"*
+3. *"What are the minimum qualifications and documents needed to get approved?"*
+4. *"Can I get funded with a credit score below 600 or past bankruptcies?"*
+5. *"How quickly can money be wired to my account?"*
 
 ---
 
@@ -574,7 +823,13 @@ export const shieldMockService = {
       }
 
       // 3. Real-Time Token Streaming from live Gemini 3.6 Flash SSE endpoint
-      const apiBase = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5000' : '');
+      let apiBase = (import.meta.env.VITE_API_URL || '').trim().replace(/\/+$/, '');
+      if (typeof window !== 'undefined') {
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (!isLocal && apiBase.includes('localhost')) {
+          apiBase = '';
+        }
+      }
       let fullResponseText = '';
       let streamedDirectlyFromBackend = false;
 
