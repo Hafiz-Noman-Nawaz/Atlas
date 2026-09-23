@@ -1,25 +1,19 @@
 import { Send, Loader2, Paperclip, X, FileText, Mic, MicOff, Globe } from 'lucide-react';
-import { useState, useMemo, useCallback, useRef, useEffect, type KeyboardEvent, type ClipboardEvent, type ChangeEvent, type DragEvent } from 'react';
+import { useState, useCallback, useRef, useEffect, type KeyboardEvent, type ClipboardEvent, type ChangeEvent, type DragEvent } from 'react';
 import toast from 'react-hot-toast';
 import { useChatStore } from '../../stores/chatStore';
 import { useAutoResize } from '../../hooks/useAutoResize';
 import { chatApi } from '../../services/chatApi';
 import type { Attachment } from '../../types';
-import { getDynamicSuggestions } from '../../lib/dynamicSuggestions';
 
 export default function MessageComposer() {
-  const { sendMessage, isSending, webSearchEnabled, toggleWebSearch, messages = [] } = useChatStore();
+  const { sendMessage, isSending, webSearchEnabled, toggleWebSearch } = useChatStore();
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
-
-  // Dynamic context-aware suggested questions that update based on conversation flow
-  const dynamicChips = useMemo(() => {
-    return getDynamicSuggestions(messages, input);
-  }, [messages, input]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { ref: textareaRef, resize } = useAutoResize(160);
@@ -211,42 +205,6 @@ export default function MessageComposer() {
       onDrop={handleDrop}
     >
       <div className="mx-auto max-w-3xl">
-        {/* Quick Action Prompt Chips + Live Web Search Toggle */}
-        <div className="mb-1.5 sm:mb-2 flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none touch-pan-x">
-          {/* Live Web Search Grounding Toggle */}
-          <button
-            type="button"
-            onClick={toggleWebSearch}
-            className={`flex-shrink-0 flex items-center gap-1.5 rounded-full px-3 py-0.5 sm:py-1 text-[11px] font-medium transition-all shadow-2xs ${
-              webSearchEnabled
-                ? 'bg-sky-500/20 text-sky-300 border border-sky-500/50 shadow-sky-500/10'
-                : 'border border-[var(--border)] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:border-slate-600'
-            }`}
-            title={webSearchEnabled ? 'Live Web Search is ON' : 'Enable live Google search grounding'}
-          >
-            <Globe size={12} className={webSearchEnabled ? 'text-sky-400 animate-spin-slow' : 'text-slate-400'} />
-            <span>Web Search {webSearchEnabled ? 'ON' : 'OFF'}</span>
-          </button>
-
-          <span className="h-3 w-px bg-[var(--border)] flex-shrink-0 mx-0.5" />
-
-          {dynamicChips.map((chip) => (
-            <button
-              key={chip.id}
-              type="button"
-              onClick={() => {
-                setInput(chip.prompt);
-                if (textareaRef.current) {
-                  textareaRef.current.focus();
-                }
-              }}
-              className="flex-shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-2.5 py-0.5 sm:py-1 text-[10.5px] sm:text-[11px] font-medium text-[var(--text-secondary)] hover:border-[#1BD582] hover:bg-[#1BD582]/10 hover:text-[#023047] dark:hover:text-[#1BD582] transition-all active:scale-95 shadow-2xs"
-            >
-              {chip.label}
-            </button>
-          ))}
-        </div>
-
         {/* Hidden file input supporting documents and images */}
         <input
           ref={fileInputRef}
@@ -278,24 +236,14 @@ export default function MessageComposer() {
                       <FileText size={16} className="text-accent" />
                     </div>
                   )}
-
-                  <div className="min-w-0 max-w-[110px] sm:max-w-[140px]">
-                    <p className="truncate text-[11px] sm:text-caption font-medium text-[var(--text-primary)]">
-                      {att.name}
-                    </p>
-                    {att.size && (
-                      <p className="text-[9px] sm:text-[10px] text-[var(--text-tertiary)]">
-                        {formatFileSize(att.size)}
-                      </p>
-                    )}
+                  <div className="max-w-[120px] sm:max-w-[160px] truncate text-[11px] sm:text-xs">
+                    <p className="font-medium text-[var(--text-primary)] truncate">{att.name}</p>
+                    {att.size && <p className="text-[10px] text-[var(--text-tertiary)]">{formatFileSize(att.size)}</p>}
                   </div>
-
                   <button
                     type="button"
                     onClick={() => removeAttachment(idx)}
-                    className="ml-0.5 rounded-full p-0.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-red-500 transition-colors"
-                    aria-label="Remove attachment"
-                    title="Remove"
+                    className="ml-1 rounded-full p-0.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-red-500 transition-colors"
                   >
                     <X size={13} />
                   </button>
@@ -307,8 +255,8 @@ export default function MessageComposer() {
 
         {/* Text Input Container */}
         <div
-          className={`flex items-end gap-1.5 sm:gap-2 rounded-xl sm:rounded-2xl border border-[var(--border)] bg-[var(--bg)] px-2.5 py-1.5 sm:px-3 sm:py-2 transition-all shadow-xs ${
-            isDragging ? 'border-accent ring-2 ring-accent/20' : 'focus-within:border-accent focus-within:ring-1 focus-within:ring-accent/20'
+          className={`flex items-end gap-1 sm:gap-1.5 rounded-xl sm:rounded-2xl border border-[var(--border)] bg-[var(--bg)] px-2.5 py-1.5 sm:px-3 sm:py-2 transition-all shadow-xs ${
+            isDragging ? 'border-accent ring-2 ring-accent/20' : 'focus-within:border-[#1BD582] focus-within:ring-1 focus-within:ring-[#1BD582]/20'
           }`}
         >
           {/* File Upload Trigger */}
@@ -316,12 +264,12 @@ export default function MessageComposer() {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading || isSending}
-            className="flex h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-accent transition-colors disabled:opacity-50"
+            className="flex h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-[#06C18C] transition-colors disabled:opacity-50"
             aria-label="Attach documents or photos"
-            title="Attach PDFs, DOCX, CSV, code, or photos"
+            title="Attach PDFs, bank statements, or documents"
           >
             {isUploading ? (
-              <Loader2 size={15} className="animate-spin text-accent" />
+              <Loader2 size={15} className="animate-spin text-[#06C18C]" />
             ) : (
               <Paperclip size={16} />
             )}
@@ -334,7 +282,7 @@ export default function MessageComposer() {
             className={`flex h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 items-center justify-center rounded-lg transition-colors ${
               isListening
                 ? 'bg-red-500 text-white animate-pulse'
-                : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-accent'
+                : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-[#06C18C]'
             }`}
             aria-label="Voice dictation"
             title={isListening ? 'Stop recording' : 'Dictate with voice'}
@@ -342,6 +290,20 @@ export default function MessageComposer() {
             {isListening ? <MicOff size={15} /> : <Mic size={16} />}
           </button>
 
+          {/* Live Web Search Grounding Toggle */}
+          <button
+            type="button"
+            onClick={toggleWebSearch}
+            className={`flex h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 items-center justify-center rounded-lg transition-colors ${
+              webSearchEnabled
+                ? 'bg-sky-500/20 text-sky-400'
+                : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-sky-400'
+            }`}
+            aria-label="Toggle web search"
+            title={webSearchEnabled ? 'Live Web Search: ON' : 'Live Web Search: OFF (click to enable)'}
+          >
+            <Globe size={16} className={webSearchEnabled ? 'text-sky-400' : ''} />
+          </button>
           <textarea
             ref={textareaRef}
             value={input}

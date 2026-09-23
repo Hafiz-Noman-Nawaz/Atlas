@@ -963,11 +963,48 @@ export const shieldMockService = {
           }
         }
       } catch (streamErr) {
-        console.warn('[Shield Service] Backend SSE stream unreachable, utilizing local RAG engine:', streamErr);
+        console.warn('[Shield Service] Backend SSE stream unreachable or errored, attempting standard API chat fallback:', streamErr);
       }
 
-      // 4. Fallback: If backend stream was not available, synthesize and stream locally
-      if (!streamedDirectlyFromBackend) {
+      // 4. Secondary Backend Fallback: If streaming did not yield text, invoke the standard POST /api/chat endpoint
+      if (!streamedDirectlyFromBackend || !fullResponseText.trim()) {
+        try {
+          const directChatEndpoint = `${apiBase}/api/chat`;
+          const chatRes = await fetch(directChatEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: data.message,
+              history: existingMsgs.slice(-6).map((m) => ({
+                role: m.role,
+                content: m.content,
+              })),
+            }),
+          });
+
+          if (chatRes.ok) {
+            const chatData = await chatRes.json();
+            const reply = chatData?.data?.reply || chatData?.reply;
+            if (reply && typeof reply === 'string') {
+              fullResponseText = reply.trim();
+              streamedDirectlyFromBackend = true;
+
+              // Stream tokens smoothly to client UI
+              const words = fullResponseText.split(' ');
+              for (let i = 0; i < words.length; i++) {
+                const token = (i === 0 ? '' : ' ') + words[i];
+                onChunk(token);
+                await new Promise((resolve) => setTimeout(resolve, 14));
+              }
+            }
+          }
+        } catch (chatErr) {
+          console.warn('[Shield Service] Direct /api/chat fallback unreachable:', chatErr);
+        }
+      }
+
+      // 5. Final Offline Fallback: Only if all backend LLM endpoints are unreachable
+      if (!streamedDirectlyFromBackend || !fullResponseText.trim()) {
         if (!fullResponseText) {
           fullResponseText = generateShieldResponse(data.message);
         }

@@ -11,28 +11,33 @@ function getAIClient() {
   return aiClient;
 }
 
-const SYSTEM_INSTRUCTION = `You are Brian Thomas, the official Senior Commercial Funding Advisor at Shield Funding (https://shieldfunding.com, Phone: (888) 882-6117).
-Your purpose is to give direct, structured, transparent, and authoritative business financing answers using the provided Shield Funding Knowledge Base.
+const SYSTEM_INSTRUCTION = `You are Brian Thomas, Senior Commercial Funding Advisor at Shield Funding (https://shieldfunding.com, Phone: (888) 882-6117).
+Your purpose is to answer the user's specific business funding questions directly, intelligently, and concisely using the provided Shield Funding Knowledge Base.
 
-### CRITICAL RULES (DIRECT & STRUCTURED ANSWERS ONLY - NO GENERIC YAPPING):
+### STRICT RULES (DIRECT & INTELLIGENT ANSWERS - NO GENERIC YAPPING):
 1. **ANSWER THE EXACT QUESTION DIRECTLY IN THE FIRST SENTENCE**:
-   - Immediately provide a clear, unequivocal direct answer to the user's specific query. Do NOT start with generic fluff or pleasantries.
-   - Example (Collateral): If asked "Is commercial or personal collateral required for a small business term loan?", immediately begin:
-     "**No**, commercial or personal collateral is not required for a small business term loan through Shield Funding. Our commercial term loans are **unsecured**, meaning you do not have to pledge real estate, personal vehicles, or equipment."
-   - Example (Line of Credit Rates): If asked "What interest rates apply when drawing funds from a business line of credit?", immediately begin:
-     "For a Business Line of Credit, the monthly interest rate is **1% to 6% per month** applied **only to the funds you actually draw** (starting at an approximate 14% annual finance charge), with draw fees between 0% and 4%."
-2. **NEVER DUMP AN ENTIRE PRODUCT BROCHURE**:
-   - Answer ONLY the specific question asked. Do not dump the entire 50-line product catalog unless the user explicitly asked "What funding products do you offer?"
-3. **USE OFFICIAL SHIELD FUNDING METRICS FACTUALLY**:
-   - **Merchant Cash Advance (MCA)**: Factor rates 1.10–1.50, up to $2,000,000, daily/weekly ACH, 3–24 months, 25%–100% early payoff fee forgiveness, 500+ FICO accepted.
-   - **Business Line of Credit**: Up to $200,000, 1%–6% monthly interest on drawn amount only, 0%–4% draw fee, 24 months renewable, monthly payments.
-   - **Small Business Term Loans**: Up to $2,000,000, ~30% APR starting rate, 6–48 months, weekly or monthly fixed payments, unsecured (no collateral).
-   - **Equipment Financing**: $10k–$2M+, up to 100% covered, 10%–15% annual rate, 5-year secured by equipment, 620+ FICO, 1+ year in business.
-   - **Invoice Factoring**: 80%–90% advanced within 24h, $20k–$1.5M, zero balance sheet debt, approval based on customer's credit, not yours.
-   - **SBA Loans**: Up to $15,000,000, ~Prime + 3%, up to 25 years, monthly payments, 640+ FICO.
-   - **Qualifications**: 4+ months in business, $10,000+/mo revenue ($120k/yr), business checking account, 500+ FICO, soft pull inquiry (zero impact on credit score). Discharged bankruptcies and tax liens accepted.
-4. **FORMATTING**:
-   - Use concise Markdown bullet points, bold key figures, and keep the tone professional, direct, and executive.`;
+   - Deliver the direct answer immediately without generic preamble or pleasantries.
+   - Example (Collateral): If asked "Is collateral required for a term loan?", immediately answer:
+     "**No**, commercial or personal collateral is not required for a small business term loan through Shield Funding. Our term loans are completely **unsecured**, meaning you do not have to pledge real estate, personal vehicles, or equipment."
+   - Example (Line of Credit Rates): If asked "What interest rates apply when drawing funds?", immediately answer:
+     "For a Business Line of Credit, the monthly interest rate is **1% to 6% per month** applied **strictly to the capital you actually draw**, with draw fees between 0% and 4%."
+2. **DO NOT DUMP UNREQUESTED PRODUCT BROCHURES**:
+   - Answer ONLY what the user specifically asked. Do NOT dump the entire product catalog or irrelevant qualifications unless the user explicitly requested a broad overview.
+3. **DO NOT REPEAT THE SAME TEXT OR CATERGORIZED RESPONSES**:
+   - Read the user's exact query and provide an intelligent, tailored answer. Never repeat boilerplate marketing paragraphs.
+4. **KEY SHIELD FUNDING FACTS (From Knowledge Base)**:
+   - **Term Loans**: Up to $2,000,000, 6–48 months, fixed weekly or monthly payments, unsecured (NO collateral).
+   - **Business Line of Credit**: Up to $250,000, 1%–6% monthly interest on drawn amount only, revolving, monthly payments.
+   - **Merchant Cash Advance (MCA)**: Factor rates 1.10–1.50, up to $2,000,000, daily/weekly remittances based on sales volume, 500+ FICO accepted.
+   - **Equipment Financing**: Up to $2,000,000, up to 100% financed, equipment itself serves as collateral.
+   - **Invoice Factoring**: Advances up to 90% in 24 hours, based on customer creditworthiness.
+   - **General Qualifications**: 4+ months in business, $10,000+/month revenue ($120k/yr), business checking account. 500+ FICO accepted (soft credit pull only; zero impact on credit score). Discharged bankruptcies and tax liens accepted.
+   - **Speed**: Funding wired in as little as 24 hours. Underwriting decisions in 2–4 hours.
+5. **CONCISE & STRUCTURED FORMATTING**:
+   - Use brief bullet points for clarity. Keep responses focused and readable.`;
+
+// Cascade candidate models: prioritize gemini-3.5-flash which has active quota and instant latency
+const CANDIDATE_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash'];
 
 /**
  * Generate context-augmented AI response using Google Gemini + RAG
@@ -53,54 +58,54 @@ export async function generateRAGResponse(userMessage, conversationHistory = [])
   const client = getAIClient();
 
   if (client) {
-    try {
-      const historyTurns = conversationHistory.slice(-6).map((m) => ({
-        role: m.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: m.content }],
-      }));
+    const historyTurns = conversationHistory.slice(-6).map((m) => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }],
+    }));
 
-      const promptContent = `### RELEVANT SHIELD FUNDING KNOWLEDGE CONTEXT:
+    const promptContent = `### RELEVANT SHIELD FUNDING KNOWLEDGE CONTEXT:
 ${contextText || 'No direct matches found in knowledge base.'}
 
 ### USER QUESTION:
 ${userMessage}
 
-Please answer the user question using the knowledge context above following your system instructions.`;
+Please provide a direct, concise, and intelligent answer to the user question using the knowledge context above following your system instructions.`;
 
-      // Try calling Gemini model
-      const modelToUse = config.geminiModel || 'gemini-3.6-flash';
-      console.log(`[GeminiService] Generating response using model: ${modelToUse}...`);
-
-      const response = await client.models.generateContent({
-        model: modelToUse,
-        contents: [
-          ...historyTurns,
-          {
-            role: 'user',
-            parts: [{ text: promptContent }],
-          },
-        ],
-        config: {
-          systemInstruction: SYSTEM_INSTRUCTION,
-          temperature: 0.2,
-          maxOutputTokens: 1024,
-        },
-      });
-
-      if (response && response.text) {
-        return {
-          content: response.text.trim(),
+    // Try candidate models in cascade order
+    for (const modelToUse of CANDIDATE_MODELS) {
+      try {
+        console.log(`[GeminiService] Generating response using model: ${modelToUse}...`);
+        const response = await client.models.generateContent({
           model: modelToUse,
-          sources: relevantChunks.map((c) => ({ title: c.title, source: c.source, score: c.score })),
-          ragApplied: true,
-        };
+          contents: [
+            ...historyTurns,
+            {
+              role: 'user',
+              parts: [{ text: promptContent }],
+            },
+          ],
+          config: {
+            systemInstruction: SYSTEM_INSTRUCTION,
+            temperature: 0.2,
+            maxOutputTokens: 1024,
+          },
+        });
+
+        if (response && response.text) {
+          return {
+            content: response.text.trim(),
+            model: modelToUse,
+            sources: relevantChunks.map((c) => ({ title: c.title, source: c.source, score: c.score })),
+            ragApplied: true,
+          };
+        }
+      } catch (err) {
+        console.warn(`[GeminiService] Model ${modelToUse} failed (${err.message?.slice(0, 100)}). Trying next candidate...`);
       }
-    } catch (err) {
-      console.warn(`[GeminiService] Gemini API invocation error, falling back to direct RAG context:`, err.message);
     }
   }
 
-  // 4. Standalone / Offline Fallback: Synthesize directly from the highest-scoring RAG chunk
+  // 4. Standalone / Offline Fallback: Extract directly and concisely from the top RAG chunk
   if (relevantChunks.length > 0 && relevantChunks[0].score > 0.3) {
     const topChunk = relevantChunks[0];
     return {
@@ -113,7 +118,7 @@ Please answer the user question using the knowledge context above following your
 
   return {
     content:
-      'I do not have that specific answer in my current knowledgebase, but our team can help through the contact page at https://shieldfunding.com/contact/ or by calling (888) 882-6117.',
+      'I do not have that specific detail in our current knowledge base. Please speak directly with a Senior Funding Advisor at **(888) 882-6117** or apply online at **shieldfunding.com/apply** for immediate assistance.',
     model: 'rag-fallback',
     sources: [],
     ragApplied: true,
@@ -138,74 +143,78 @@ export async function generateRAGResponseStream(userMessage, conversationHistory
   }
 
   const client = getAIClient();
-  const modelToUse = config.geminiModel || 'gemini-3.6-flash';
+  let fullContent = '';
 
   if (client) {
-    try {
-      const historyTurns = conversationHistory.slice(-6).map((m) => ({
-        role: m.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: m.content }],
-      }));
+    const historyTurns = conversationHistory.slice(-6).map((m) => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }],
+    }));
 
-      const promptContent = `### RELEVANT SHIELD FUNDING KNOWLEDGE CONTEXT:
+    const promptContent = `### RELEVANT SHIELD FUNDING KNOWLEDGE CONTEXT:
 ${contextText || 'No direct matches found in knowledge base.'}
 
 ### USER QUESTION:
 ${userMessage}
 
-Please answer the user question using the knowledge context above following your system instructions.`;
+Please provide a direct, concise, and intelligent answer to the user question using the knowledge context above following your system instructions.`;
 
-      console.log(`[GeminiService] Streaming response using model: ${modelToUse}...`);
+    for (const modelToUse of CANDIDATE_MODELS) {
+      try {
+        console.log(`[GeminiService] Streaming response using model: ${modelToUse}...`);
+        fullContent = '';
 
-      const stream = await client.models.generateContentStream({
-        model: modelToUse,
-        contents: [
-          ...historyTurns,
-          {
-            role: 'user',
-            parts: [{ text: promptContent }],
-          },
-        ],
-        config: {
-          systemInstruction: SYSTEM_INSTRUCTION,
-          temperature: 0.2,
-          maxOutputTokens: 1024,
-        },
-      });
-
-      for await (const chunk of stream) {
-        const text = chunk.text;
-        if (text) {
-          fullContent += text;
-          onToken(text);
-        }
-      }
-
-      if (fullContent.trim()) {
-        return {
-          content: fullContent.trim(),
+        const stream = await client.models.generateContentStream({
           model: modelToUse,
-          sources: relevantChunks.map((c) => ({ title: c.title, source: c.source, score: c.score })),
-          ragApplied: true,
-        };
+          contents: [
+            ...historyTurns,
+            {
+              role: 'user',
+              parts: [{ text: promptContent }],
+            },
+          ],
+          config: {
+            systemInstruction: SYSTEM_INSTRUCTION,
+            temperature: 0.2,
+            maxOutputTokens: 1024,
+          },
+        });
+
+        for await (const chunk of stream) {
+          const text = chunk.text;
+          if (text) {
+            fullContent += text;
+            onToken(text);
+          }
+        }
+
+        if (fullContent.trim()) {
+          return {
+            content: fullContent.trim(),
+            model: modelToUse,
+            sources: relevantChunks.map((c) => ({ title: c.title, source: c.source, score: c.score })),
+            ragApplied: true,
+          };
+        }
+      } catch (err) {
+        console.warn(`[GeminiService] Streaming model ${modelToUse} failed (${err.message?.slice(0, 100)}). Trying next candidate...`);
       }
-    } catch (err) {
-      console.warn(`[GeminiService] Gemini streaming error, falling back to local synthesizer:`, err.message);
     }
   }
 
-  // Fallback: Local knowledge synthesis with simulated natural token streaming
+  // Fallback: Local knowledge synthesis with simulated token streaming
   const fallbackText =
     relevantChunks.length > 0 && relevantChunks[0].score > 0.3
       ? relevantChunks[0].content
-      : 'I do not have that specific answer in my current knowledgebase, but our team can help through the contact page at https://shieldfunding.com/contact/ or by calling (888) 882-6117.';
+      : 'I do not have that specific detail in our current knowledge base. Please speak directly with a Senior Funding Advisor at (888) 882-6117 or visit shieldfunding.com for immediate assistance.';
 
+  fullContent = '';
   const words = fallbackText.split(' ');
   for (let i = 0; i < words.length; i++) {
     const token = (i === 0 ? '' : ' ') + words[i];
     fullContent += token;
     onToken(token);
-    await new Promise((r) => setTimeout(r, 20));
+    await new Promise((r) => setTimeout(r, 15));
   }
 
   return {
