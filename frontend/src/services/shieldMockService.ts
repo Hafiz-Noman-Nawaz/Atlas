@@ -823,11 +823,11 @@ export const shieldMockService = {
       }
 
       // 3. Real-Time Token Streaming from live Gemini 3.6 Flash SSE endpoint
-      let apiBase = (import.meta.env.VITE_API_URL || '').trim().replace(/\/+$/, '');
+      let apiBase = (import.meta.env.VITE_API_URL || 'https://atlas-backend-five.vercel.app').trim().replace(/\/+$/, '');
       if (typeof window !== 'undefined') {
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        if (!isLocal && apiBase.includes('localhost')) {
-          apiBase = '';
+        if (!isLocal && (apiBase.includes('localhost') || !apiBase)) {
+          apiBase = 'https://atlas-backend-five.vercel.app';
         }
       }
       let fullResponseText = '';

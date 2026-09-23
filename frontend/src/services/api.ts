@@ -1,8 +1,14 @@
 import axios from 'axios';
 
-const envUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').trim().replace(/\/+$/, '');
+const rawEnvUrl = (import.meta.env.VITE_API_URL || '').trim().replace(/\/+$/, '');
+const isBrowserNonLocal = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+const envUrl = (!rawEnvUrl || (isBrowserNonLocal && rawEnvUrl.includes('localhost')))
+  ? 'https://atlas-backend-five.vercel.app'
+  : (rawEnvUrl || 'http://localhost:5000');
+
 const normalizedUrl = /^https?:\/\//i.test(envUrl) ? envUrl : `https://${envUrl}`;
 export const API_BASE_URL = normalizedUrl.endsWith('/api') ? normalizedUrl : `${normalizedUrl}/api`;
+
 
 const api = axios.create({
   baseURL: API_BASE_URL,
