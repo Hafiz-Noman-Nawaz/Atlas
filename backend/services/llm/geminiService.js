@@ -96,8 +96,8 @@ Please provide a direct, concise, and intelligent answer to the user question us
           temperature: 0.2,
           maxOutputTokens: 1024,
         };
-        // Disable internal chain-of-thought latency to deliver instant 1-second responses
-        if (modelToUse.includes('3.5-flash') || modelToUse.includes('3.6-flash')) {
+        // Disable internal chain-of-thought latency to deliver instant 1-second responses (lite models do not support thinkingConfig)
+        if (!modelToUse.includes('lite') && (modelToUse.includes('3.5-flash') || modelToUse.includes('3.6-flash'))) {
           reqConfig.thinkingConfig = { thinkingBudget: 0 };
         }
 
@@ -192,8 +192,8 @@ Please provide a direct, concise, and intelligent answer to the user question us
           temperature: 0.2,
           maxOutputTokens: 1024,
         };
-        // Disable internal chain-of-thought latency to deliver instant 1-second responses
-        if (modelToUse.includes('3.5-flash') || modelToUse.includes('3.6-flash')) {
+        // Disable internal chain-of-thought latency to deliver instant 1-second responses (lite models do not support thinkingConfig)
+        if (!modelToUse.includes('lite') && (modelToUse.includes('3.5-flash') || modelToUse.includes('3.6-flash'))) {
           reqConfig.thinkingConfig = { thinkingBudget: 0 };
         }
 
