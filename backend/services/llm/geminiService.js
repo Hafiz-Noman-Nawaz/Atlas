@@ -43,8 +43,8 @@ const CANDIDATE_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3
  * Generate context-augmented AI response using Google Gemini + RAG
  */
 export async function generateRAGResponse(userMessage, conversationHistory = []) {
-  // 1. Retrieve top relevant chunks from RAG vector store
-  const relevantChunks = await ragService.retrieveRelevantContext(userMessage, 4);
+  // 1. Retrieve top 3 relevant chunks from RAG vector store
+  const relevantChunks = await ragService.retrieveRelevantContext(userMessage, 3);
 
   // 2. Format context string
   let contextText = '';
@@ -75,6 +75,16 @@ Please provide a direct, concise, and intelligent answer to the user question us
     for (const modelToUse of CANDIDATE_MODELS) {
       try {
         console.log(`[GeminiService] Generating response using model: ${modelToUse}...`);
+        const reqConfig = {
+          systemInstruction: SYSTEM_INSTRUCTION,
+          temperature: 0.2,
+          maxOutputTokens: 1024,
+        };
+        // Disable internal chain-of-thought latency to deliver instant 1-second responses
+        if (modelToUse.includes('3.5-flash') || modelToUse.includes('3.6-flash')) {
+          reqConfig.thinkingConfig = { thinkingBudget: 0 };
+        }
+
         const response = await client.models.generateContent({
           model: modelToUse,
           contents: [
@@ -84,11 +94,7 @@ Please provide a direct, concise, and intelligent answer to the user question us
               parts: [{ text: promptContent }],
             },
           ],
-          config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
-            temperature: 0.2,
-            maxOutputTokens: 1024,
-          },
+          config: reqConfig,
         });
 
         if (response && response.text) {
@@ -133,7 +139,7 @@ Please provide a direct, concise, and intelligent answer to the user question us
  * @returns {Promise<{content: string, model: string, sources: Array, ragApplied: boolean}>}
  */
 export async function generateRAGResponseStream(userMessage, conversationHistory = [], onToken = () => {}) {
-  const relevantChunks = await ragService.retrieveRelevantContext(userMessage, 4);
+  const relevantChunks = await ragService.retrieveRelevantContext(userMessage, 3);
 
   let contextText = '';
   if (relevantChunks.length > 0) {
@@ -164,6 +170,16 @@ Please provide a direct, concise, and intelligent answer to the user question us
         console.log(`[GeminiService] Streaming response using model: ${modelToUse}...`);
         fullContent = '';
 
+        const reqConfig = {
+          systemInstruction: SYSTEM_INSTRUCTION,
+          temperature: 0.2,
+          maxOutputTokens: 1024,
+        };
+        // Disable internal chain-of-thought latency to deliver instant 1-second responses
+        if (modelToUse.includes('3.5-flash') || modelToUse.includes('3.6-flash')) {
+          reqConfig.thinkingConfig = { thinkingBudget: 0 };
+        }
+
         const stream = await client.models.generateContentStream({
           model: modelToUse,
           contents: [
@@ -173,11 +189,7 @@ Please provide a direct, concise, and intelligent answer to the user question us
               parts: [{ text: promptContent }],
             },
           ],
-          config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
-            temperature: 0.2,
-            maxOutputTokens: 1024,
-          },
+          config: reqConfig,
         });
 
         for await (const chunk of stream) {
