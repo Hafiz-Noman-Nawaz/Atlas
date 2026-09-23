@@ -129,6 +129,89 @@ export const SHIELD_PRODUCTS: ShieldProduct[] = [
 export function generateShieldResponse(query: string): string {
   const q = query.toLowerCase().trim();
 
+  // 0. SPECIFIC DIRECT INQUIRIES FIRST (Direct, structured, no generic brochure yapping)
+
+  // A. Collateral & Security Inquiries
+  if (
+    q.includes('collateral') ||
+    q.includes('pledge') ||
+    q.includes('security required') ||
+    q.includes('commercial or personal collateral') ||
+    q.includes('personal collateral')
+  ) {
+    return `### 🛡️ Collateral Requirements for Commercial Funding
+
+**No, commercial or personal collateral is not required.**
+
+Shield Funding's commercial term loans, lines of credit, and merchant cash advances are **100% unsecured**:
+
+---
+
+#### 💡 Key Details:
+* **No Real Estate or Personal Assets:** You do not need to pledge personal real estate, personal vehicles, or home equity.
+* **Cash-Flow Based Underwriting:** Approvals are determined by your **business cash flow, regular bank deposits ($10,000+/mo), and operating history**, rather than asset equity.
+* **Keep Your Assets Free:** Your business property, inventory, and accounts remain unencumbered.
+* **Exception (Equipment Financing):** If you specifically choose Equipment Financing, the purchased machinery or vehicle itself serves as collateral, allowing up to 100% financing without a cash down payment.`;
+  }
+
+  // B. Bankruptcy & Tax Liens Inquiries
+  if (
+    q.includes('bankruptcy') ||
+    q.includes('bankruptcies') ||
+    q.includes('tax lien') ||
+    q.includes('liens')
+  ) {
+    return `### 🛡️ Bankruptcies & Tax Liens Eligibility
+
+**Yes, you can qualify with a discharged bankruptcy or existing tax liens.**
+
+---
+
+#### 💡 Underwriting Guidelines:
+* **Discharged Bankruptcies Accepted:** Past bankruptcies do not disqualify your business from Merchant Cash Advances or Business Lines of Credit.
+* **Tax Liens Accepted:** Existing federal or state tax liens can be accommodated.
+* **Revenue-Based Decision:** Underwriting evaluates your business’s active monthly cash flow and regular bank deposits ($10,000+/mo) rather than past credit challenges.`;
+  }
+
+  // C. Prepayment Penalties & Early Payoff Discounts
+  if (
+    q.includes('early pay') ||
+    q.includes('prepay') ||
+    q.includes('prepayment penalty') ||
+    q.includes('prepayment penalties') ||
+    q.includes('discount for paying early')
+  ) {
+    return `### 💵 Early Payoff Discounts & Prepayment Terms
+
+**No, there are no prepayment penalties. In fact, you save money by paying early.**
+
+---
+
+#### 💡 Early Settlement Benefits:
+* **Zero Penalties:** You are never penalized for settling your funding ahead of schedule.
+* **Fee Forgiveness:** Shield Funding provides **10% to 100% forgiveness** of remaining fees or interest when paying off your balance early.
+* **Facility Renewals:** Once **25% to 50%** of your active facility is paid in, you can request renewals with increased credit lines and lower rates.`;
+  }
+
+  // D. Bank Statements & Document Requirements
+  if (
+    (q.includes('document') || q.includes('statement') || q.includes('tax return') || q.includes('no doc') || q.includes('no-doc')) &&
+    (q.includes('need') || q.includes('require') || q.includes('upload') || q.includes('how many'))
+  ) {
+    return `### 📄 Documentation Requirements
+
+Shield Funding utilizes a streamlined, low-documentation application process:
+
+---
+
+#### 📋 What You Need:
+1. **1-Page Digital Application** (takes under 2 minutes).
+2. **3 to 4 Months of Recent Business Bank Statements** (PDFs or instant digital link).
+3. **Government-Issued Photo ID** & **Voided Business Check** (to wire funds upon approval).
+
+> 💡 **No Tax Returns or Extensive Financial Statements** are required for standard working capital advances and lines of credit under $150,000!`;
+  }
+
   // 1. Business Line of Credit (LOC) & Revolving Credit / Draws / LOC Rates
   if (
     q.includes('line of credit') ||
