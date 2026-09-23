@@ -1,28 +1,25 @@
 import { Send, Loader2, Paperclip, X, FileText, Mic, MicOff, Globe } from 'lucide-react';
-import { useState, useCallback, useRef, useEffect, type KeyboardEvent, type ClipboardEvent, type ChangeEvent, type DragEvent } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect, type KeyboardEvent, type ClipboardEvent, type ChangeEvent, type DragEvent } from 'react';
 import toast from 'react-hot-toast';
 import { useChatStore } from '../../stores/chatStore';
 import { useAutoResize } from '../../hooks/useAutoResize';
 import { chatApi } from '../../services/chatApi';
 import type { Attachment } from '../../types';
-
-const PROMPT_CHIPS = [
-  { label: '⚡ MCA Requirements', prompt: 'What are the minimum requirements to qualify for a Merchant Cash Advance?' },
-  { label: '🔄 Line of Credit', prompt: 'How does a business line of credit work, and what interest rates apply?' },
-  { label: '🛡️ Bad Credit Funding', prompt: 'Can I get approved for funding if I have bad or fair credit?' },
-  { label: '⏱️ Funding Speed', prompt: 'How quickly can I get funded after submitting my bank statements?' },
-  { label: '📊 Term Loans vs MCA', prompt: 'What is the difference between an MCA and a traditional term loan?' },
-  { label: '📞 Speak to Advisor', prompt: 'How can I speak directly to a Shield Funding advisor?' },
-];
+import { getDynamicSuggestions } from '../../lib/dynamicSuggestions';
 
 export default function MessageComposer() {
-  const { sendMessage, isSending, webSearchEnabled, toggleWebSearch } = useChatStore();
+  const { sendMessage, isSending, webSearchEnabled, toggleWebSearch, messages = [] } = useChatStore();
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
+
+  // Dynamic context-aware suggested questions that update based on conversation flow
+  const dynamicChips = useMemo(() => {
+    return getDynamicSuggestions(messages, input);
+  }, [messages, input]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { ref: textareaRef, resize } = useAutoResize(160);
@@ -233,9 +230,9 @@ export default function MessageComposer() {
 
           <span className="h-3 w-px bg-[var(--border)] flex-shrink-0 mx-0.5" />
 
-          {PROMPT_CHIPS.map((chip, idx) => (
+          {dynamicChips.map((chip) => (
             <button
-              key={idx}
+              key={chip.id}
               type="button"
               onClick={() => {
                 setInput(chip.prompt);
@@ -243,7 +240,7 @@ export default function MessageComposer() {
                   textareaRef.current.focus();
                 }
               }}
-              className="flex-shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-2.5 py-0.5 sm:py-1 text-[10.5px] sm:text-[11px] font-medium text-[var(--text-secondary)] hover:border-accent hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-all active:scale-95 shadow-2xs"
+              className="flex-shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-2.5 py-0.5 sm:py-1 text-[10.5px] sm:text-[11px] font-medium text-[var(--text-secondary)] hover:border-[#1BD582] hover:bg-[#1BD582]/10 hover:text-[#023047] dark:hover:text-[#1BD582] transition-all active:scale-95 shadow-2xs"
             >
               {chip.label}
             </button>

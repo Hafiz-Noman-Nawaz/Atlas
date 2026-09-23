@@ -5,10 +5,11 @@ import MessageComposer from './MessageComposer';
 import EmptyState from './EmptyState';
 
 export default function ChatLayout() {
-  const { messages = [], activeConversationId, isLoadingMessages } = useChatStore();
+  const { messages = [], isLoadingMessages } = useChatStore();
   const msgList = Array.isArray(messages) ? messages : [];
 
-  const showEmptyState = !activeConversationId && msgList.length === 0 && !isLoadingMessages;
+  // Show welcoming EmptyState whenever the consultation has no messages yet
+  const showEmptyState = msgList.length === 0 && !isLoadingMessages;
 
   return (
     <div className="flex flex-1 flex-col h-full min-h-0 overflow-hidden bg-[var(--bg)]">
