@@ -1,5 +1,5 @@
 /**
- * Natural Neural Speech Synthesis for ZeoAtlas Messages
+ * Natural Neural Speech Synthesis for Shield Funding Assistant Messages
  */
 
 let currentUtterance: SpeechSynthesisUtterance | null = null;

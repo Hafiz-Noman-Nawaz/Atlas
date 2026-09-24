@@ -1,7 +1,6 @@
-# Shield Funding Assistant (ZeoAtlas) — Complete Technical Architecture & System Documentation
+# Shield Funding Assistant — Complete Technical Architecture & System Documentation
 
-**Bot Name:** Shield Funding Assistant  
-**Platform / Repository:** ZeoAtlas  
+**Project Name:** Shield Funding Assistant  
 **Developed For:** Zemotify  
 **Live Production URL:** [https://zeoatlas.tech](https://zeoatlas.tech/)  
 **Live Backend API URL:** [https://atlas-backend-five.vercel.app](https://atlas-backend-five.vercel.app/)  
@@ -10,10 +9,10 @@
 
 ---
 
-## 1. Executive Summary & Purpose of ZeoAtlas
+## 1. Executive Summary & Purpose of Shield Funding Assistant
 
-### 1.1 What ZeoAtlas Is
-**ZeoAtlas** is an enterprise-grade, retrieval-augmented intelligence assistant built for commercial financing consultations. Developed for **Zemotify**, the system powers real-time loan qualification, automated payment calculations, program discovery, and expert funding guidance for **Shield Funding** (an established American commercial financing brokerage operating nationwide).
+### 1.1 What Shield Funding Assistant Is
+**Shield Funding Assistant** is an enterprise-grade, retrieval-augmented intelligence assistant built for commercial financing consultations. Developed for **Zemotify**, the system powers real-time loan qualification, automated payment calculations, program discovery, and expert funding guidance for **Shield Funding** (an established American commercial financing brokerage operating nationwide).
 
 ### 1.2 The Problem It Solves
 Small and mid-sized businesses (SMBs) seeking working capital face major friction:
@@ -21,15 +20,15 @@ Small and mid-sized businesses (SMBs) seeking working capital face major frictio
 * Commercial alternative lending (MCAs, Lines of Credit, Invoice Factoring, Equipment Financing) involves complex metrics—such as factor rates, daily/weekly ACH remittances, draw fees, and advance percentages—that confuse business owners.
 * Generic LLMs (like out-of-the-box ChatGPT) regularly hallucinate loan terms, quote incorrect interest rate bands, provide generic answers, or fail to accurately represent a broker's specific lending criteria.
 
-ZeoAtlas solves this by coupling Google's latest **Gemini 3.5/3.6 Flash generative models** with a high-speed, grounded **Retrieval-Augmented Generation (RAG) knowledge engine**. It evaluates borrower cash flow, time in business, credit score, and revenue, delivering direct, accurate answers in under 1.5 seconds.
+Shield Funding Assistant solves this by coupling Google's latest **Gemini 3.5/3.6 Flash generative models** with a high-speed, grounded **Retrieval-Augmented Generation (RAG) knowledge engine**. It evaluates borrower cash flow, time in business, credit score, and revenue, delivering direct, accurate answers in under 1.5 seconds.
 
 ### 1.3 Target Audience
 1. **Commercial Borrowers & Business Owners:** Seeking fast working capital ($5,000 to $5,000,000+) across retail, restaurants, construction, medical, trucking, and B2B services.
 2. **Commercial Loan Brokers & Underwriters:** Requiring fast answers regarding qualification guidelines, early payoff discount terms, and documentation requirements.
 3. **Zemotify Enterprise Evaluators:** Assessing state-of-the-art AI application design with real-time Server-Sent Events (SSE) streaming, serverless scalability, and decoupled resilient architecture.
 
-### 1.4 How ZeoAtlas Differs from a Simple Chatbot
-| Capability | Generic Chatbot | ZeoAtlas AI Assistant |
+### 1.4 How Shield Funding Assistant Differs from a Simple Chatbot
+| Capability | Generic Chatbot | Shield Funding Assistant |
 | :--- | :--- | :--- |
 | **Information Source** | Parametric training weights (prone to hallucination) | **Deterministic Knowledge Base**: 149 indexed chunks across 9 commercial finance domains |
 | **Response Latency** | 5 – 15 seconds (deep thinking models) | **Sub-1.5s First Token**: Zero-thinking latency optimization (`thinkingBudget: 0`) |
@@ -44,7 +43,7 @@ ZeoAtlas solves this by coupling Google's latest **Gemini 3.5/3.6 Flash generati
 
 All technologies listed below are verified from `package.json`, source files, and deployment configurations.
 
-| Layer | Technology | Version | Purpose in ZeoAtlas |
+| Layer | Technology | Version | Purpose in Shield Funding Assistant |
 | :--- | :--- | :--- | :--- |
 | **Frontend Framework** | React | `^19.2.8` | Component-based interactive UI with React 19 concurrent features |
 | **Build & Dev Tool** | Vite | `^8.2.2` | Fast HMR dev server and Rollup-based production chunk bundling |
@@ -74,7 +73,7 @@ All technologies listed below are verified from `package.json`, source files, an
 
 ## 3. High-Level System Architecture
 
-ZeoAtlas operates as a **decoupled, event-driven web application** leveraging serverless execution and resilient client fallbacks.
+Shield Funding Assistant operates as a **decoupled, event-driven web application** leveraging serverless execution and resilient client fallbacks.
 
 ```mermaid
 flowchart TB
@@ -268,7 +267,7 @@ Please provide a direct, concise, and intelligent answer to the user question us
 ## 6. LLM & Prompting System (`geminiService.js`)
 
 ### 6.1 Provider & Model Cascade
-ZeoAtlas utilizes the official `@google/genai` SDK (`GoogleGenAI`). To safeguard against Google Free Tier rate limits (429 Resource Exhausted) or server overload (503 Service Unavailable), the backend executes a resilient **Model Cascade**:
+Shield Funding Assistant utilizes the official `@google/genai` SDK (`GoogleGenAI`). To safeguard against Google Free Tier rate limits (429 Resource Exhausted) or server overload (503 Service Unavailable), the backend executes a resilient **Model Cascade**:
 
 ```mermaid
 flowchart LR
@@ -283,7 +282,7 @@ flowchart LR
 ```
 
 ### 6.2 Zero-Thinking Latency Optimization
-By default, Gemini 3.5 models run an internal chain-of-thought engine that delays the first token by 8 to 11 seconds. ZeoAtlas eliminates this bottleneck:
+By default, Gemini 3.5 models run an internal chain-of-thought engine that delays the first token by 8 to 11 seconds. Shield Funding Assistant eliminates this bottleneck:
 ```javascript
 const reqConfig = {
   systemInstruction: SYSTEM_INSTRUCTION,
@@ -325,7 +324,7 @@ export function stripEmailSignoffs(text) {
 
 ## 7. Conversation & Memory Management
 
-ZeoAtlas supports a **dual-tier memory architecture** that bridges server-side MongoDB persistence with client-side zero-latency session storage.
+Shield Funding Assistant supports a **dual-tier memory architecture** that bridges server-side MongoDB persistence with client-side zero-latency session storage.
 
 ### 7.1 Server-Side Context Window
 * In `geminiService.js`, the last 6 turns of the conversation history are sliced and formatted into the Gemini request:
@@ -401,7 +400,7 @@ Base URL (Local): `http://localhost:5000/api`
 
 ## 9. Database & Data Models
 
-ZeoAtlas connects to **MongoDB Atlas** via Mongoose (`8.10.1`). In serverless environments, connection reuse is handled in `backend/config/db.js` using cached promises.
+Shield Funding Assistant connects to **MongoDB Atlas** via Mongoose (`8.10.1`). In serverless environments, connection reuse is handled in `backend/config/db.js` using cached promises.
 
 ### 9.1 Data Models Overview
 
@@ -510,11 +509,11 @@ In `MessageList.tsx`, streaming tokens arriving from the SSE connection are proc
 
 ## 11. Authentication & Authorization
 
-ZeoAtlas implements a **dual-mode authentication strategy**:
+Shield Funding Assistant implements a **dual-mode authentication strategy**:
 
 ```mermaid
 flowchart TD
-    User([User Enters ZeoAtlas]) --> AuthCheck{Clerk Configured in Env?}
+    User([User Enters Shield Funding Assistant]) --> AuthCheck{Clerk Configured in Env?}
     
     AuthCheck -- Yes (VITE_CLERK_PUBLISHABLE_KEY present) --> ClerkFlow["Clerk React SDK (OAuth, Google, Email)"]
     ClerkFlow --> Bridge["ClerkTokenBridge in App.tsx"]
@@ -715,7 +714,7 @@ npm run dev
 
 ## 19. Real-World User Flow
 
-1. **Landing on ZeoAtlas**:
+1. **Landing on Shield Funding Assistant**:
    * The user opens `https://zeoatlas.tech`.
    * An uncluttered, modern interface displays the Shield Funding crest, Trustpilot credibility badges, 4 quick interactive tool buttons (`Pre-Qualify`, `Calculator`, `Loan Catalog`, `Advisor Desk`), and 4 starter question pills.
 2. **Asking a Question**:
@@ -752,4 +751,4 @@ npm run dev
 
 ---
 
-*Documentation compiled and verified against the ZeoAtlas source codebase.*
+*Documentation compiled and verified against the Shield Funding Assistant source codebase.*

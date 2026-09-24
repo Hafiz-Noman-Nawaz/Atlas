@@ -1,4 +1,4 @@
-// ZeoAtlas Service Worker with Network-First Strategy for HTML
+// Shield Funding Assistant Service Worker with Network-First Strategy for HTML
 const CACHE_NAME = 'zeoatlas-v2';
 const STATIC_ASSETS = [
   '/favicon.png',
