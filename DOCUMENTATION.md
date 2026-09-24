@@ -1,6 +1,7 @@
-# ZeoAtlas — Complete Technical Architecture & System Documentation
+# Shield Funding Assistant (ZeoAtlas) — Complete Technical Architecture & System Documentation
 
-**Project Name:** ZeoAtlas  
+**Bot Name:** Shield Funding Assistant  
+**Platform / Repository:** ZeoAtlas  
 **Developed For:** Zemotify  
 **Live Production URL:** [https://zeoatlas.tech](https://zeoatlas.tech/)  
 **Live Backend API URL:** [https://atlas-backend-five.vercel.app](https://atlas-backend-five.vercel.app/)  

@@ -1,433 +1,348 @@
-# ⚡ ZeoAtlas — Autonomous AI Engineering & Conversational Platform
+# 🛡️ Shield Funding Assistant — Commercial AI Advisory Platform
 
 <div align="center">
 
-[![Production Status](https://img.shields.io/badge/Status-Live%20in%20Production-0ea5e9?style=for-the-badge&logo=vercel)](https://www.zeoatlas.tech)
-[![ML Accuracy](https://img.shields.io/badge/ML%20Accuracy-100%25%20(36%20Intents)-10b981?style=for-the-badge&logo=scikitlearn)](https://www.zeoatlas.tech)
-[![Node Backend](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-339933?style=for-the-badge&logo=nodedotjs)](https://nodejs.org)
-[![React Frontend](https://img.shields.io/badge/Frontend-React%2018%20%7C%20Vite-61dafb?style=for-the-badge&logo=react)](https://react.dev)
+[![Production Status](https://img.shields.io/badge/Status-Live%20in%20Production-10b981?style=for-the-badge&logo=vercel)](https://zeoatlas.tech)
+[![Domain](https://img.shields.io/badge/Domain-zeoatlas.tech-023047?style=for-the-badge&logo=googlechrome)](https://zeoatlas.tech)
+[![Backend Status](https://img.shields.io/badge/Backend-Vercel%20Serverless%20%7C%20Live-0ea5e9?style=for-the-badge&logo=nodedotjs)](https://atlas-backend-five.vercel.app/api/health)
+[![AI Model](https://img.shields.io/badge/AI%20Engine-Gemini%203.5%20%2F%203.6%20Flash-f59e0b?style=for-the-badge&logo=google)](https://aistudio.google.com/)
+[![React Version](https://img.shields.io/badge/Frontend-React%2019%20%7C%20Vite%208-61dafb?style=for-the-badge&logo=react)](https://react.dev)
 [![Database](https://img.shields.io/badge/Database-MongoDB%20Atlas-47a248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/atlas)
-[![License](https://img.shields.io/badge/License-MIT-amber?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/Client-Zemotify-8b5cf6?style=for-the-badge)](https://zeoatlas.tech)
 
-**ZeoAtlas** is a production-grade, full-stack conversational AI platform specialized in software engineering, technical reasoning, real-time web search grounding, and interactive code execution.
+**Shield Funding Assistant** is a production-grade, retrieval-augmented commercial finance AI consultation platform developed for **Zemotify**. It provides instant, grounded loan underwriting guidance, real-time rate calculations, and pre-qualification evaluations for small and mid-sized businesses.
 
-[🌐 Live Website (zeoatlas.tech)](https://www.zeoatlas.tech) • [📖 Architecture & Case Study](#-system-architecture--engineering-case-study) • [🚀 Quickstart](#-getting-started-locally) • [📡 API Reference](#-api-endpoints)
+[🌐 Live Production Website](https://zeoatlas.tech) • [📡 Live Backend API](https://atlas-backend-five.vercel.app/api/health) • [📖 Full Technical Architecture (DOCUMENTATION.md)](./DOCUMENTATION.md) • [🚀 Quickstart](#-local-development-setup)
 
 </div>
 
 ---
 
 ## 📌 Table of Contents
-1. [Executive Summary](#-executive-summary)
-2. [Key Features & Capabilities](#-key-features--capabilities)
-3. [System Architecture & Engineering Case Study](#-system-architecture--engineering-case-study)
-4. [Machine Learning Pipeline & Dataset Engineering](#-machine-learning-pipeline--dataset-engineering)
-5. [Complete Tech Stack & Tools](#-complete-tech-stack--tools)
-6. [Project Structure](#-project-structure)
-7. [API Endpoints](#-api-endpoints)
-8. [Environment Configuration](#-environment-configuration)
-9. [Getting Started Locally](#-getting-started-locally)
-10. [Engineering Challenges & Key Solutions](#-engineering-challenges--key-solutions)
-11. [Author & Acknowledgments](#-author--acknowledgments)
+1. [Executive Summary & Purpose](#-executive-summary--purpose)
+2. [What the System Does](#-what-the-system-does)
+3. [Core Capabilities & Features](#-core-capabilities--features)
+4. [How We Built It (Technology Stack)](#-how-we-built-it-technology-stack)
+5. [System Architecture & Data Flow](#-system-architecture--data-flow)
+6. [How the Grounded RAG Pipeline Works](#-how-the-grounded-rag-pipeline-works)
+7. [The LLM Model Cascade & 10x Latency Optimization](#-the-llm-model-cascade--10x-latency-optimization)
+8. [Backend API Reference](#-backend-api-reference)
+9. [Database & Data Models](#-database--data-models)
+10. [Local Development Setup](#-local-development-setup)
+11. [Performance Benchmarks](#-performance-benchmarks)
+12. [Project Deliverable Summary](#-project-deliverable-summary)
 
 ---
 
-## 🌟 Executive Summary
+## 🌟 Executive Summary & Purpose
 
-**ZeoAtlas** bridges the gap between lightweight, zero-latency local Natural Language Understanding (NLU) and high-reasoning Generative AI Large Language Models (LLMs).
+### The Business Challenge
+Securing business financing through traditional banks is notoriously slow and difficult, with rejection rates exceeding 80% for small businesses. Conversely, alternative commercial lending—including **Merchant Cash Advances (MCAs)**, **Business Lines of Credit**, **Term Loans**, **Equipment Financing**, and **Invoice Factoring**—involves complex underwriting variables: factor rates, daily/weekly ACH remittances, draw fees, and advance percentages.
 
-Unlike conventional chatbots that blindly route all user queries directly to expensive cloud LLM APIs, ZeoAtlas employs a **two-tier hybrid intelligence architecture**:
-1. **Tier 1 (Instant Local Classification)**: A regularized, hybrid n-gram Scikit-Learn machine learning model (29,275 samples across 36 intents, 100% test accuracy) predicts user intent and confidence in sub-millisecond time via a persistent Node.js ↔ Python IPC worker.
-2. **Tier 2 (Context-Aware Generative Streaming)**: Technical inquiries, complex coding tasks, summarizations, and live search queries are streamed directly from Google Gemini with conversation history, persistent memories, attached document context, and Google Search Grounding.
+Generic LLMs (like standard ChatGPT) hallucinate lending rates, invent non-existent approval criteria, or dump 50-line generic brochures that overwhelm real business owners.
 
----
+### The Solution: Shield Funding Assistant
+Developed for **Zemotify**, the **Shield Funding Assistant** bridges this gap by coupling Google’s latest **Gemini 3.5 & 3.6 Flash** models with a deterministic **Retrieval-Augmented Generation (RAG)** knowledge base grounded in Shield Funding's official underwriting criteria.
 
-## 🚀 Key Features & Capabilities
-
-### 1. 🧠 High-Accuracy ML Intent Routing (36 Intents)
-- Custom machine learning model trained on **29,275 samples across 36 domain intents** (Python, JavaScript, Git & DevOps, System Design, SQL/Databases, Summarization, Capabilities, User Profile, etc.).
-- Probability calibration via `CalibratedClassifierCV` ensures high-confidence routing and eliminates false positives.
-
-### 2. 🌐 Live Web Search Grounding
-- Interactive **`🌐 Web Search`** toggle in the message composer.
-- Directly invokes Google Gemini Search Grounding tools (`tools: [{ googleSearch: {} }]`) to pull real-time 2026 facts, verified documentation, software release notes, and cited sources.
-
-### 3. 💻 Side-by-Side Code Canvas & In-Browser Sandbox
-- **Live Execution Sandbox**: Run HTML, CSS, JavaScript, and React snippets inside an isolated, secure `iframe`.
-- **In-Browser Console Output**: Real-time logging of `console.log()` outputs and runtime exceptions.
-- **Code Editor & Exporter**: Tabbed syntax view with 1-click downloads (`.html`, `.js`, `.py`, `.ts`, `.json`).
-- **In-Chat Triggers**: Every code block in chat includes instant **"▶ Run"** and **"⛶ Canvas"** buttons.
-
-### 4. 🔊 Neural Text-to-Speech (TTS) Voice Readout
-- Natural neural voice synthesis powered by Web Speech API.
-- Markdown cleanup engine strips code blocks and syntax markers for crystal-clear auditory playback.
-- Animated sound wave visualizers in message actions with instant pause/stop controls.
-
-### 5. 🔗 Shareable Public Chat Snapshots (`/share/:shareId`)
-- Generate public, anonymized read-only links for any conversation.
-- Share directly to **𝕏 / Twitter**, **LinkedIn**, and **WhatsApp**.
-- Dedicated standalone public view page (`SharedChatPage.tsx`) accessible to teammates without authentication.
-
-### 6. 📄 Multimodal Document Understanding (RAG)
-- Upload files up to 20MB (**PDF, DOCX, CSV, TXT, Markdown, Python, JavaScript, JSON**).
-- Automated server-side text extraction parses documents and injects content directly into the conversation context window.
-
-### 7. 🧠 Long-Term Memory & User Profile Persistence
-- Explicit memory triggers: *"Remember that my favorite stack is MERN"* saves preferences permanently to the database.
-- Recall commands: *"What do you remember about me?"* lists all saved user context and notes across sessions.
-
-### 8. 📱 Installable Progressive Web App (PWA)
-- Full PWA manifest (`manifest.json`) and service worker (`sw.js`) with network-first caching.
-- Installable on desktop (Chrome, Edge, macOS) and mobile devices (iOS, Android) as a native application with offline resilience.
-
-### 9. ⚡ Extreme Performance & Code Splitting
-- Optimized initial JavaScript entry bundle from `784 kB` down to **`27.8 kB` (~96% reduction)**.
-- Dynamic route and modal code-splitting via `React.lazy` and `Suspense`.
-- Custom `React.memo` comparators on message bubbles eliminate re-render lag during real-time token streaming.
+* **Domain Name:** [https://zeoatlas.tech](https://zeoatlas.tech/)
+* **Backend Endpoint:** [https://atlas-backend-five.vercel.app](https://atlas-backend-five.vercel.app/)
+* **Primary Focus:** Direct, intelligent, concise commercial financing advice with zero generic yapping, sub-1.5s streaming latency, and embedded interactive loan calculators.
 
 ---
 
-## 🏗️ System Architecture & Engineering Case Study
+## 💡 What the System Does
+
+1. **Direct, Structured Financing Answers**: Reads the user’s exact query, retrieves relevant knowledge passages, and answers the question directly in the very first sentence (e.g., *"No, collateral is not required for a small business term loan through Shield Funding..."*).
+2. **Interactive Payment & APR Calculator**: Allows business owners to simulate borrowing amounts, terms, and payment schedules with live interest and factor rate calculations.
+3. **60-Second Pre-Qualification Wizard**: Evaluates borrower monthly revenue ($10,000+ min), time in business (4+ months min), and credit score (500+ FICO accepted with soft pull).
+4. **Complete Program Catalog**: Instant access to Shield Funding's 6 core programs (MCA, Line of Credit, Term Loans, Equipment Financing, Invoice Factoring, SBA 7(a) & Express).
+5. **Real-Time Token Streaming**: Server-Sent Events (SSE) deliver a fluid, natural conversation cadence with zero jagged UI jumps.
+
+---
+
+## 🚀 Core Capabilities & Features
+
+### 1. ⚡ High-Speed Grounded RAG Engine
+* 149 semantically divided knowledge chunks parsed from 9 authoritative policy documents.
+* In-memory caching and 128-dimensional local vectorizer delivering sub-millisecond retrieval (**0.1 ms**).
+* Keyword intent boosting guarantees 100% precision on loan terms, collateral requirements, and early payoff forgiveness.
+
+### 2. 🎛️ Resilient Model Cascade
+* Routes queries through `gemini-3.5-flash` $\longrightarrow$ `gemini-3.5-flash-lite` $\longrightarrow$ `gemini-3.6-flash`.
+* Bypasses quota spikes and API limits with zero service interruption.
+
+### 3. ⏱️ 10x Latency Optimization (`thinkingBudget: 0`)
+* Disables unnecessary internal chain-of-thought delays, reducing Time to First Token from **11.3 seconds to 1.1 seconds**.
+
+### 4. 🗂️ Interactive Financial Tools (Modals)
+* **Loan Calculator Modal** (`FundingCalculatorModal.tsx`): Interactive sliders for loan amount, term, and interest rate with live amortized payment estimates.
+* **Pre-Qualification Modal** (`QualificationModal.tsx`): Step-by-step credit, revenue, and time-in-business qualifier.
+* **Loan Catalog Modal** (`FundingProductsModal.tsx`): Detailed breakdown of requirements, approval speed, and best-fit industries.
+* **Advisor Hotline Desk** (`ContactAdvisorModal.tsx`): Direct phone click-to-call `(888) 882-6117`, email, and office locations.
+
+### 5. 🎨 Decluttered, Modern Executive UI
+* Clean, uncluttered layout matching modern SaaS design standards.
+* Top 4-tool navigation bar: `[Pre-Qualify]`, `[Calculator]`, `[Loan Catalog]`, and `[Advisor Desk]`.
+* 4 high-impact starter question cards in a balanced 2x2 grid.
+* Unified input bar embedding file upload, voice dictation, and web search toggle in one line.
+
+### 6. 🔄 Dual-Channel Network Resilience
+* The frontend streams directly via Server-Sent Events (`POST /api/chat/stream`).
+* If network interruptions or proxy timeouts occur, the client automatically falls back to standard HTTP `POST /api/chat`, ensuring the real LLM always responds.
+
+---
+
+## 🛠️ How We Built It (Technology Stack)
+
+| Layer | Technology | Version | Purpose in Application |
+| :--- | :--- | :--- | :--- |
+| **Frontend Framework** | **React** | `19.2.8` | Component UI utilizing React 19 concurrent features |
+| **Build Tool & Bundler** | **Vite** | `8.2.2` | Fast HMR dev server & code-split Rollup production builds |
+| **Language** | **TypeScript** | `7.0.2` | Strict type safety for API requests, messages, and state |
+| **Styling** | **Tailwind CSS** | `4.3.3` | Utility styling via `@tailwindcss/vite` engine |
+| **State Management** | **Zustand** | `5.0.15` | Fast, lightweight store for messages, modals, and theme |
+| **Routing** | **React Router DOM** | `7.18.2` | Client-side routing (`/`, `/login`, `/register`, `/share/:id`) |
+| **Authentication** | **Clerk React** + **JWT** | `5.61.9` / `9.0.2` | Dual-mode auth supporting Clerk OAuth & local JWT tokens |
+| **Animations** | **Framer Motion** | `13.1.0` | Fluid modal transitions and message bubble animations |
+| **Icons** | **Lucide React** | `1.33.0` | Clean financial iconography |
+| **Markdown Rendering** | **React Markdown + GFM** | `10.1.0` / `4.0.1` | Formatted tables, bold figures, and financial quotes |
+| **Backend Framework** | **Express** (Node.js) | `4.21.2` (ESM) | REST API, SSE streaming pipeline, and middleware |
+| **AI / LLM Provider** | **`@google/genai`** | `2.21.0` | Official Google GenAI SDK orchestrating Gemini 3.5 & 3.6 |
+| **Vector Engine** | **Local Vectorizer** | Custom (128-dim) | Deterministic term-frequency hash vectorizer (**0.1 ms**) |
+| **Database** | **MongoDB Atlas** | Cloud Cluster | Cloud database hosting chunks, conversations, and users |
+| **ODM** | **Mongoose** | `8.10.1` | Schemas, lifecycle hooks, and serverless connection pooling |
+| **Security & Protection** | **Helmet** + **CORS** | `8.0.0` / `2.8.5` | HTTP security headers and cross-origin access control |
+| **Rate Limiter** | **express-rate-limit** | `7.5.0` | In-memory IP protection against denial-of-service |
+| **Hosting (Frontend)** | **Vercel Edge Network** | Production | Custom domain deployment: `https://zeoatlas.tech` |
+| **Hosting (Backend)** | **Vercel Serverless** | Node.js Runtime | Serverless API deployment: `atlas-backend-five.vercel.app` |
+
+---
+
+## 🏗️ System Architecture & Data Flow
 
 ```mermaid
 flowchart TB
-    subgraph Client ["Client Tier (React 18 + Vite + PWA)"]
-        UI[ZeoAtlas Web UI]
-        Composer[Message Composer & Voice Dictation]
-        Canvas[Code Canvas Sandbox]
-        TTS[Neural Text-to-Speech]
-        PWA[Service Worker & Manifest Cache]
+    subgraph Client ["Frontend Client Tier (https://zeoatlas.tech)"]
+        UI["React 19 Executive UI"]
+        Composer["Message Composer & Voice Dictation"]
+        Tools["Calculator & Eligibility Modals"]
+        Store["Zustand Chat Store"]
     end
 
-    subgraph Auth ["Authentication Tier"]
-        Clerk[Clerk Auth / JWT Tokens]
+    subgraph Serverless ["Backend API Tier (atlas-backend-five.vercel.app)"]
+        Gateway["Vercel Serverless Function (/api/index.js)"]
+        ExpressApp["Express Application (/app.js)"]
+        SSEEndpoint["SSE Controller (/api/chat/stream)"]
+        PostEndpoint["HTTP POST Controller (/api/chat)"]
     end
 
-    subgraph Backend ["Backend Tier (Node.js + Express)"]
-        Server[Express Server]
-        AuthMW[JWT / Clerk Middleware]
-        DocExtract[PDF / DOCX Text Extractor]
-        Router[Intent Router & Memory Engine]
+    subgraph Intelligence ["Grounded Intelligence & LLM Tier"]
+        RAGService["RAG Engine (ragService.js)"]
+        Vectorizer["Deterministic 128-dim Vectorizer (0.1ms)"]
+        ModelCascade{"Gemini Cascade Router"}
+        Gemini35["gemini-3.5-flash (Primary - thinkingBudget: 0)"]
+        Gemini35Lite["gemini-3.5-flash-lite (Quota Fallback)"]
+        Gemini36["gemini-3.6-flash (Failover)"]
     end
 
-    subgraph ML_Service ["Machine Learning Tier (Python 3.10)"]
-        IPC[Persistent stdio IPC Bridge]
-        Classifier[Calibrated LinearSVC Model\n36 Intents | 100% Test Acc]
-        VectorPipeline[Word & Char n-gram FeatureUnion]
+    subgraph DataTier ["Persistence Tier (MongoDB Atlas)"]
+        DB[(MongoDB Atlas Cluster)]
+        Chunks[("149 Knowledge Chunks")]
+        Conversations[("User Conversations")]
+        Messages[("Stored Messages")]
     end
 
-    subgraph GenAI ["Generative AI Tier"]
-        Gemini[Google Gemini API]
-        Grounding[Google Search Grounding Tool]
-    end
+    UI --> Store
+    Store -- "1. Primary: SSE Stream" --> Gateway
+    Store -- "2. Fallback: HTTP POST" --> Gateway
 
-    subgraph Storage ["Database Tier"]
-        Mongo[(MongoDB Atlas Cloud)]
-        UserColl[(Users & Custom Memories)]
-        ConvColl[(Conversations & Messages)]
-        ShareColl[(Public Shared Snapshots)]
-    end
+    Gateway --> ExpressApp
+    ExpressApp --> SSEEndpoint
+    ExpressApp --> PostEndpoint
 
-    UI --> Composer
-    Composer -->|REST / SSE Stream| Server
-    UI -->|Clerk Auth Flow| Clerk
-    Clerk -->|Bearer Token| AuthMW
-    AuthMW --> Server
+    SSEEndpoint --> RAGService
+    PostEndpoint --> RAGService
 
-    Server --> DocExtract
-    Server --> Router
+    RAGService --> Vectorizer
+    RAGService -- "Initial Batch Cache" --> Chunks
+    RAGService --> ModelCascade
 
-    Router -->|JSON via stdin| IPC
-    IPC --> VectorPipeline --> Classifier
-    Classifier -->|Predicted Intent & Confidence| IPC
-    IPC -->|JSON via stdout| Router
+    ModelCascade --> Gemini35
+    ModelCascade --> Gemini35Lite
+    ModelCascade --> Gemini36
 
-    Router -->|Generative / Search Queries| Gemini
-    Gemini --> Grounding
-
-    Server --> Mongo
-    Mongo --> UserColl
-    Mongo --> ConvColl
-    Mongo --> ShareColl
-
-    Server -->|SSE Stream (data: chunk)| UI
-    UI --> Canvas
-    UI --> TTS
+    ExpressApp --> DB
+    DB --> Conversations
+    DB --> Messages
 ```
 
 ---
 
-## 🔬 Machine Learning Pipeline & Dataset Engineering
+## 🧠 How the Grounded RAG Pipeline Works
 
-### 1. Dataset Generation (`build_master_dataset.py`)
-- **Dataset Size**: **29,275 balanced samples** across **36 distinct technical and conversational intents**.
-- **Intent Classes**:
-  - `python`, `javascript`, `web_development`, `programming`, `database_sql`, `algorithms`, `git_devops`, `cybersecurity`, `machine_learning`, `data_science`, `system_design`, `code_debugging`.
-  - `summarize_simplify`, `capabilities`, `app_features`, `bot_identity`, `creator`, `chat_management`, `user_name_declare`, `user_name_query`.
-  - `greeting`, `goodbye`, `thanks`, `help`, `how_are_you`, `age`, `time`, `weather`, `jokes`, `motivation`, `positive_feedback`, `negative_feedback`, `study_help`, `contact`, `unsupported_tasks`, `unknown`.
-
-### 2. Feature Engineering & Modeling (`train_anti_overfitting.py`)
-- **Hybrid Feature Union**:
-  - **Word TF-IDF Vectorizer**: `ngram_range=(1, 3)`, `sublinear_tf=True`, `max_features=25,000`.
-  - **Character N-Gram Vectorizer**: `analyzer='char_wb'`, `ngram_range=(3, 6)`, capturing typos, prefixes, and sub-word technical terminology.
-- **Classifier**: `LinearSVC(C=0.5, penalty='l2', loss='squared_hinge', tol=1e-4)`.
-- **Probability Calibration**: `CalibratedClassifierCV(estimator=LinearSVC, method='sigmoid', cv=5)` generates accurate confidence distributions between 0.0% and 100.0%.
-- **Validation Results**:
-  - **Test Accuracy**: `100.00%` (on 5,855 held-out generalization samples)
-  - **Macro F1 Score**: `1.0000`
-  - **Weighted Avg F1**: `1.0000`
-
-### 3. High-Performance IPC Inference (`predict_api.py`)
-- Persistent Python background process communicates with Node.js via standard input/output (`stdin`/`stdout`).
-- Eliminates the 2.5-second cold-start latency of spawning new Python processes per query, providing **sub-5ms prediction response times**.
-
----
-
-## 💻 Complete Tech Stack & Tools
-
-### Frontend
-- **Core Framework**: React 18.3, TypeScript, Vite 6
-- **Styling**: TailwindCSS v4, Vanilla CSS Custom Properties (Theme Engine)
-- **State Management**: Zustand
-- **Animations**: Framer Motion
-- **Markdown & Code Highlighting**: React Markdown, Remark GFM
-- **Icons**: Lucide React
-- **Notifications**: React Hot Toast
-- **Audio & Voice**: Web Speech API (`SpeechRecognition`, `SpeechSynthesis`)
-- **PWA & Caching**: Service Worker API, Web App Manifest
-
-### Backend
-- **Runtime**: Node.js v18+ (ES Modules)
-- **Web Framework**: Express.js
-- **Database & ODM**: MongoDB Atlas, Mongoose 8
-- **Authentication**: Clerk Express SDK (`@clerk/express`), JWT (`jsonwebtoken`), BCrypt.js
-- **Generative AI SDK**: Google Gen AI SDK (`@google/genai`)
-- **File Parsing**: Multer, `pdf-parse`, `mammoth` (.docx), CSV parser
-- **Streaming**: Server-Sent Events (SSE)
-
-### Machine Learning & Data Science
-- **Language**: Python 3.10+
-- **Libraries**: Scikit-Learn, Pandas, NumPy, Joblib, SciPy
-- **Model Storage**: Serialized Pickled Pipeline (`chatbot_intent_model.pkl`)
-
-### Hosting & Infrastructure
-- **Frontend Hosting**: Vercel (Custom Domain: `zeoatlas.tech`)
-- **Backend & ML Server**: Render Cloud Web Service
-- **Database**: MongoDB Atlas M0 Replica Cluster
-- **Authentication Provider**: Clerk Cloud
-- **CI/CD**: GitHub Actions / Git Automated Webhook Deploys
-
----
-
-## 📂 Project Structure
+The RAG implementation lives in `backend/services/rag/`:
 
 ```
-Chatbot/
-├── backend/
-│   ├── src/
-│   │   ├── config/             # Database & environment configurations
-│   │   ├── controllers/        # Express route handlers (auth, chat, conversations, feedback)
-│   │   ├── middleware/         # Auth verification, error handlers, rate limiters
-│   │   ├── models/             # Mongoose schemas (User, Conversation, Message, SharedChat, Feedback)
-│   │   ├── routes/             # API routing endpoints
-│   │   ├── services/           # Chatbot service, Intent Router, LLM Service, ML IPC bridge
-│   │   └── server.js           # Server entry point
-│   ├── uploads/                # Temporary local file upload storage
-│   ├── package.json
-│   └── README.md
-├── frontend/
-│   ├── public/
-│   │   ├── favicon.ico
-│   │   ├── favicon.png
-│   │   ├── logo.png            # Transparent glowing logo asset
-│   │   ├── manifest.json       # PWA Manifest
-│   │   └── sw.js               # Network-first Service Worker
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── auth/           # Login & Register forms with password strength meters
-│   │   │   ├── canvas/         # Side-by-Side Code Canvas sandbox & preview
-│   │   │   ├── chat/           # MessageComposer, MessageBubble, MarkdownRenderer, ShareDialog
-│   │   │   ├── layout/         # AppLayout, AuthLayout, ProtectedRoute
-│   │   │   ├── settings/       # SettingsPanel (Themes, AI Creativity, Sound, Font Size)
-│   │   │   └── sidebar/        # ConversationList, ConversationItem, Search bar
-│   │   ├── hooks/              # Custom React hooks (useAutoResize)
-│   │   ├── lib/                # Speech synthesis & utility functions
-│   │   ├── pages/              # ChatPage, LoginPage, RegisterPage, SharedChatPage
-│   │   ├── services/           # Axios API client & SSE stream reader
-│   │   ├── stores/             # Zustand stores (chatStore, authStore, uiStore)
-│   │   ├── types/              # TypeScript interfaces & API types
-│   │   ├── App.tsx             # Root routing with React.lazy code-splitting
-│   │   ├── main.tsx            # Entry point & PWA service worker registration
-│   │   └── index.css           # Design tokens, variables & typography
-│   ├── index.html
-│   ├── vite.config.ts          # Rollup chunk splitting configuration
-│   └── package.json
-├── ml/
-│   ├── data/
-│   │   ├── build_master_dataset.py   # Dataset builder (29,275 samples)
-│   │   └── chatbot_training_data.csv
-│   ├── models/
-│   │   ├── chatbot_intent_model.pkl  # Trained ML pipeline artifact
-│   │   └── model_metadata.json
-│   ├── predict_api.py                # Fast stdio IPC prediction worker
-│   └── train_anti_overfitting.py     # Scikit-Learn training script
-└── README.md                         # Project documentation
+backend/data/knowledge_base/knowledgebase/
+├── Bank_Loan_vs_Credit_Card_vs_MCA.md
+├── Decline_Reasons_and_Advice.md
+├── How_AI_Helps_Clients.md
+├── Shield_Funding_Company_Profile.md
+├── Shield_Funding_General_FAQs.md
+├── Shield_Funding_Process_Questions.md
+├── Shield_Funding_Products_Offered.md
+├── Shield_Funding_Qualify_Requirements.md
+└── Shield_Funding_Rebuttals.md
 ```
+
+### 1. Document Dividing (`chunker.js`)
+Instead of character-length splitting, documents are divided along semantic boundaries:
+* **FAQs**: Divided by `### Q\d+:` regex into atomic Question & Answer passages.
+* **Products**: Divided by `## Loan Type \d+:` separating MCA, Lines of Credit, Term Loans, Equipment, Factoring, and SBA.
+* **Qualifications**: Split into Minimum, Premium, and Bankruptcy/Tax Lien guidelines.
+
+### 2. High-Speed Local Vectorizer (`embeddingService.js`)
+To avoid remote network timeouts on serverless cold starts, queries and passages are embedded via a 128-dimensional normalized term-frequency hash vectorizer executing in **0.1 milliseconds**.
+
+### 3. Ranking & Context Injection
+Cosine similarity compares the query against all 149 knowledge chunks. Keyword intent rules grant arithmetic boosts (`+0.25` for products, `+0.30` for bankruptcy/credit inquiries). The top 3 passages are formatted into the prompt context.
 
 ---
 
-## 📡 API Endpoints
+## ⚡ The LLM Model Cascade & 10x Latency Optimization
 
-### 1. Authentication (`/api/auth`)
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| `POST` | `/api/auth/register` | Register new local account | No |
-| `POST` | `/api/auth/login` | Login and receive JWT token | No |
-| `GET` | `/api/auth/me` | Retrieve authenticated user profile | Yes |
-| `PATCH` | `/api/auth/profile` | Update profile (nickname, preferences) | Yes |
+### Latency Breakthrough
+By default, Gemini 3.5 models run an internal reasoning engine that delays token generation by 8 to 11 seconds. ZeoAtlas configures:
+```javascript
+const reqConfig = {
+  systemInstruction: SYSTEM_INSTRUCTION,
+  temperature: 0.2,
+  maxOutputTokens: 1024,
+};
 
-### 2. Chat & Streaming (`/api/chat`)
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| `POST` | `/api/chat` | Send message (synchronous) | Yes |
-| `POST` | `/api/chat/stream` | Send message & stream tokens via SSE | Yes |
-| `POST` | `/api/chat/:id/share` | Generate public read-only share link | Yes |
-| `GET` | `/api/chat/public/share/:shareId` | Retrieve shared conversation snapshot | **Public** |
+// Disable internal thinking latency on models that support it
+if (!modelToUse.includes('lite') && (modelToUse.includes('3.5-flash') || modelToUse.includes('3.6-flash'))) {
+  reqConfig.thinkingConfig = { thinkingBudget: 0 };
+}
+```
+* **Time to First Token (TTFT)**: Dropped from **11.3 seconds down to 1.1 seconds**!
+* **End-to-End Stream**: Completes in **~2.5 seconds**.
 
-### 3. Conversations (`/api/conversations`)
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| `GET` | `/api/conversations` | List all conversations for user | Yes |
-| `POST` | `/api/conversations` | Create a new conversation | Yes |
-| `GET` | `/api/conversations/:id` | Get single conversation metadata | Yes |
-| `PATCH` | `/api/conversations/:id` | Rename conversation | Yes |
-| `PATCH` | `/api/conversations/:id/pin` | Toggle pin status | Yes |
-| `DELETE` | `/api/conversations/:id` | Delete conversation and messages | Yes |
-| `DELETE` | `/api/conversations` | Delete all user conversations | Yes |
-| `GET` | `/api/conversations/:id/messages` | Get paginated message history | Yes |
-
-### 4. Upload & Feedback (`/api`)
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| `POST` | `/api/upload` | Upload & extract text from documents/images | Yes |
-| `POST` | `/api/messages/:id/feedback` | Submit thumbs up/down rating | Yes |
-| `GET` | `/api/health` | Service health status check | No |
+### Automated Email Sign-Off Removal
+The prompt explicitly forbids email closings, and `stripEmailSignoffs()` strips any trailing *"Best regards, Brian Thomas..."* signatures before the response renders, guaranteeing a natural continuous chat.
 
 ---
 
-## ⚙️ Environment Configuration
+## 📡 Backend API Reference
 
-### Backend (`backend/.env`)
-```env
-PORT=8000
-APP_NAME=ZeoAtlas
-NODE_ENV=production
+Base Production URL: `https://atlas-backend-five.vercel.app/api`
 
-# Database
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/zeoatlas?retryWrites=true&w=majority
-
-# Authentication
-JWT_SECRET=your_super_secret_jwt_key
-CLERK_SECRET_KEY=sk_live_your_clerk_secret_key
-
-# Generative AI & ML
-GEMINI_API_KEY=your_google_gemini_api_key
-GEMINI_MODEL=gemini-2.5-flash
-CHATBOT_MODE=real
-ML_CONFIDENCE_THRESHOLD=0.50
-
-# CORS
-CORS_ORIGINS=https://www.zeoatlas.tech,https://zeoatlas.tech,http://localhost:5173
-```
-
-### Frontend (`frontend/.env`)
-```env
-VITE_API_URL=https://atlas-backend-production-url.onrender.com/api
-VITE_CLERK_PUBLISHABLE_KEY=pk_live_your_clerk_publishable_key
-```
+| Method | Endpoint | Auth | Purpose | Request Body |
+| :--- | :--- | :--- | :--- | :--- |
+| **POST** | `/chat/stream` | Public | Real-time SSE streaming consultation | `{ message: string, history?: [] }` |
+| **POST** | `/chat` | Public | Standard HTTP POST consultation fallback | `{ message: string, history?: [] }` |
+| **GET** | `/health` | Public | Server uptime and MongoDB connection state | None |
+| **GET** | `/knowledge/overview` | Public | Total counts of FAQs, products, rebuttals | None |
+| **GET** | `/knowledge/faqs` | Public | All loaded commercial financing FAQs | None |
+| **GET** | `/knowledge/products` | Public | Complete 6-program loan specifications | None |
+| **POST** | `/auth/register` | Public (Rate Limited) | Register user account | `{ name, email, password }` |
+| **POST** | `/auth/login` | Public (Rate Limited) | Obtain JWT authentication token | `{ email, password }` |
+| **GET** | `/auth/me` | Bearer JWT | Current authenticated user profile | None |
+| **GET** | `/conversations` | Bearer JWT | List saved user consultation sessions | None |
+| **POST** | `/conversations` | Bearer JWT | Create new consultation session | `{ title: string }` |
+| **DELETE**| `/conversations/:id` | Bearer JWT | Delete consultation and messages | None |
 
 ---
 
-## 🛠️ Getting Started Locally
+## 🗄️ Database & Data Models
 
-### 1. Prerequisites
-- **Node.js**: v18.0.0 or higher
-- **Python**: v3.10 or higher
-- **MongoDB**: Local MongoDB or free MongoDB Atlas URI
+ZeoAtlas connects to **MongoDB Atlas** using Mongoose schemas:
 
-### 2. Clone Repository
+1. **`KnowledgeChunk`** (`backend/models/KnowledgeChunk.js`):
+   * Stores persistent RAG passages with fields: `chunkId` (unique), `source`, `category`, `title`, `content`, `embedding`, and `metadata`.
+2. **`User`** (`backend/models/User.js`):
+   * Stores registered accounts with bcrypt-hashed passwords (10 salt rounds) and email validation.
+3. **`Conversation`** (`backend/models/Conversation.js`):
+   * Stores consultation sessions linked to a specific `User`.
+4. **`Message`** (`backend/models/Message.js`):
+   * Stores individual conversation turns (`role`: `user` | `assistant` | `system`).
+
+---
+
+## 🚀 Local Development Setup
+
+### Prerequisites
+* **Node.js**: `>= 20.x`
+* **npm**: `>= 10.x`
+* **Google Gemini API Key**: Free key from [Google AI Studio](https://aistudio.google.com/)
+* **MongoDB**: Local MongoDB or free MongoDB Atlas URI
+
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/Hafiz-Noman-Nawaz/Atlas.git
 cd Atlas
 ```
 
-### 3. Setup Backend & Python ML Environment
+### 2. Backend Setup
 ```bash
-# In project root
 cd backend
 npm install
-
-# Setup Python dependencies
-cd ../ml
-python -m venv venv
-# Windows:
-.\venv\Scripts\activate
-# Mac/Linux:
-source venv/bin/activate
-
-pip install scikit-learn pandas numpy joblib
+cp .env.example .env
+```
+Configure your `backend/.env`:
+```env
+PORT=5000
+NODE_ENV=development
+MONGODB_URI=your_mongodb_atlas_connection_string
+JWT_SECRET=your_jwt_secret_key
+CLIENT_URL=http://localhost:5173
+GEMINI_API_KEY=your_actual_gemini_api_key
+GEMINI_MODEL=gemini-3.5-flash
+```
+Start the backend development server:
+```bash
+npm run dev
+# Running at http://localhost:5000
 ```
 
-### 4. Train the ML Model (Optional — Pre-trained artifact included)
+### 3. Frontend Setup
+In a new terminal:
 ```bash
-python data/build_master_dataset.py
-python train_anti_overfitting.py
-```
-
-### 5. Setup Frontend
-```bash
-cd ../frontend
+cd frontend
 npm install
+cp .env.example .env
+```
+Configure your `frontend/.env`:
+```env
+VITE_API_URL=http://localhost:5000
+```
+Start the Vite development server:
+```bash
+npm run dev
+# Running at http://localhost:5173
 ```
 
-### 6. Run the Application
-- **Start Backend**:
-  ```bash
-  cd backend
-  npm run dev
-  ```
-- **Start Frontend**:
-  ```bash
-  cd frontend
-  npm run dev
-  ```
-- Open `http://localhost:5173` in your browser.
+---
+
+## 📊 Performance Benchmarks
+
+| Metric | Before Optimization | After Optimization | Improvement |
+| :--- | :--- | :--- | :--- |
+| **Time to First Token (TTFT)** | **11,278 ms** (~11.3s) | **1,181 ms** (~1.2s) | **~10× Faster** ⚡ |
+| **Total Stream Completion** | **12,182 ms** (~12.2s) | **2,650 ms** (~2.6s) | **~5× Faster** 🚀 |
+| **Knowledge Retrieval Latency** | **800 – 1,500 ms** (404 wait) | **0.1 ms** (local) | **Instant** |
+| **Production Build Size** | Code-split Rollup | Single gzip chunks < 75kB | **Instant Load** |
 
 ---
 
-## 💡 Engineering Challenges & Key Solutions
+## 📋 Project Deliverable Summary
 
-### 1. Zero-Overhead Python ↔ Node.js IPC
-- **Challenge**: Executing a Python script per incoming chat message created 1.5–2.5 seconds of overhead due to interpreter startup.
-- **Solution**: Built a persistent stdio IPC worker (`predict_api.py`). Node.js maintains an open child process that passes JSON payloads over `stdin` and reads predictions over `stdout` in < 5ms.
-
-### 2. Token Streaming Performance & Layout Thrashing
-- **Challenge**: Server-Sent Events stream ~20 chunks per second. Updating React state caused all 50+ message bubbles in history to re-render, creating noticeable frame drops.
-- **Solution**: Wrapped `MessageBubble` and `MarkdownRenderer` in `React.memo` with custom prop comparators. Only the actively streaming assistant bubble updates, keeping UI at 60 FPS.
-
-### 3. Stale Deployment White-Screens & Service Worker Cache Busting
-- **Challenge**: PWA service workers aggressively cached `index.html`. Deploying new chunk hashes caused 404 MIME errors when the old HTML requested deleted scripts.
-- **Solution**: Implemented a **Network-First** service worker strategy for HTML documents, coupled with Vite's `vite:preloadError` auto-reload hook.
+* **Project Name**: Shield Funding Assistant (ZeoAtlas)
+* **Client / Purpose**: Developed for **Zemotify** for commercial financing advisory
+* **Live Web URL**: [https://zeoatlas.tech](https://zeoatlas.tech/)
+* **Live Backend API**: [https://atlas-backend-five.vercel.app](https://atlas-backend-five.vercel.app/)
+* **Full Architecture Guide**: See [DOCUMENTATION.md](./DOCUMENTATION.md) for 21-section in-depth technical specifications.
 
 ---
 
-## 👨‍💻 Author & Acknowledgments
-
-- **Lead Developer**: **Hafiz Noman Nawaz**
-- **GitHub**: [@Hafiz-Noman-Nawaz](https://github.com/Hafiz-Noman-Nawaz)
-- **Live Platform**: [https://www.zeoatlas.tech](https://www.zeoatlas.tech)
-
----
-
-## 📄 License
-This project is licensed under the [MIT License](LICENSE).
+*Authored and maintained for Zemotify. Deployed live in production.*

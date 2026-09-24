@@ -170,7 +170,7 @@ export default function SharedChatPage() {
           to="/"
           className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-5 py-2 text-xs font-semibold text-white hover:bg-teal-500 transition-all shadow-md shadow-teal-600/20"
         >
-          <span>Continue Conversation in ZeoAtlas</span>
+          <span>Continue Conversation in Shield Funding Assistant</span>
           <ArrowRight size={14} />
         </Link>
       </div>
